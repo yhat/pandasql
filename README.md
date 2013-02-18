@@ -19,7 +19,8 @@ iris_df.columns = [re.sub("[() ]", "", col) for col in iris_df.columns]
 
 print sqldf("select * from iris_df limit 10;", locals())
 print sqldf("select sepalwidthcm, species from iris_df limit 10;", locals())
-
+</pre>
+<pre>
 q = """
       select
         species
