@@ -1,6 +1,8 @@
 from distutils.core import setup
 from setuptools import find_packages
 
+required = ['sqlparse==0.1.6']
+
 setup(
     name="pandasql",
     version="0.0.1",
@@ -11,5 +13,6 @@ setup(
     packages=find_packages(),
     description="sqldf for pandas",
     long_description=open("README.txt").read(),
+    install_requires=required,
 )
 
