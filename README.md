@@ -1,0 +1,4 @@
+pandasql
+========
+
+sqldf for pandas
