@@ -25,12 +25,12 @@ def _extract_table_names(q):
 def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
-def sqldf(q, objs=locals()): 
+def sqldf(q, env=locals()): 
     """
     query pandas data frames using sql syntax
     
     q: a sql query using DataFrames as tables
-    objs=locals(): you must include locals() or globals() in your function
+    env=locals(): you must include locals() or globals() in your function
          call to allow sqldf to access the variables in your python environment
 
     Example
@@ -47,9 +47,9 @@ def sqldf(q, objs=locals()):
     with sqlite.connect('.pandasql.db', detect_types=sqlite.PARSE_DECLTYPES) as conn:
         tables = _extract_table_names(q)
         for table in tables:
-            if table not in objs:
+            if table not in env:
                 raise Exception("%s not found" % table)
-            df = objs[table]
+            df = env[table]
             _write_table(table, df, conn)
         try:
             result = frame_query(q, conn)    
