@@ -4,6 +4,7 @@ from sqlparse.tokens import Whitespace
 import pandas as pd
 from pandas.io.sql import write_frame, frame_query
 import os
+import re
 
 
 def _extract_table_names(q):

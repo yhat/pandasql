@@ -37,6 +37,9 @@ def pysqldf(q):
 
 print "*"*80
 print "calling from a helper function"
+print '''def pysqldf(q):
+    "add this to your script if you get tired of calling locals()"
+        return sqldf(q, globals())'''
 print "-"*80
 print q
 print pysqldf(q)
@@ -66,7 +69,8 @@ q = """
     from
         iris_df
     where
-        species = 'virginica';
+        species = 'virginica'
+        and sepallengthcm > 7.7;
 """
 print "*"*80
 print "where clause"
@@ -80,7 +84,7 @@ q = """
     from
         iris_df
     where
-        id in (select id from iris_df where sepalwidthcm*sepallengthcm > 20);
+        id in (select id from iris_df where sepalwidthcm*sepallengthcm > 25);
 """
 print "*"*80
 print "subqueries"
