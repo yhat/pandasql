@@ -25,12 +25,12 @@ def _extract_table_names(q):
 def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
-def sqldf(q, env=locals()): 
+def sqldf(q, env): 
     """
     query pandas data frames using sql syntax
     
     q: a sql query using DataFrames as tables
-    env=locals(): you must include locals() or globals() in your function
+    env: variable environment; you must include locals() or globals() in your function
          call to allow sqldf to access the variables in your python environment
 
     Example
