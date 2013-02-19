@@ -24,6 +24,7 @@ def _extract_table_names(q):
 
 
 def _write_table(tablename, df, conn):
+    "writes a dataframe to the sqlite database"
     for col in df.columns:
         if re.search("[() ]", col):
             msg = "please follow SQLite column naming conventions: "
@@ -31,6 +32,7 @@ def _write_table(tablename, df, conn):
             raise Exception(msg)
 
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
+
 
 def sqldf(q, env): 
     """
