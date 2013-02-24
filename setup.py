@@ -15,7 +15,7 @@ setup(
     package_dir={"pandasql": "pandasql"},
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
-    long_description=open("README.txt").read(),
+    long_description=open("README.md").read(),
     install_requires=required,
 )
 
