@@ -1,125 +1,77 @@
 pandasql
 ========
 
-sqldf for pandas
+<code>pandasql</code> allows you to query <code>pandas</code> DataFrames using SQL syntax. It works similarly to <code>sqldf</code> in R.
 
-<pre>
-   sepallengthcm  sepalwidthcm  petallengthcm  petalwidthcm species
-0            5.1           3.5            1.4           0.2  setosa
-1            4.9           3.0            1.4           0.2  setosa
-2            4.7           3.2            1.3           0.2  setosa
-3            4.6           3.1            1.5           0.2  setosa
-4            5.0           3.6            1.4           0.2  setosa
-5            5.4           3.9            1.7           0.4  setosa
-6            4.6           3.4            1.4           0.3  setosa
-7            5.0           3.4            1.5           0.2  setosa
-8            4.4           2.9            1.4           0.2  setosa
-9            4.9           3.1            1.5           0.1  setosa
-   sepalwidthcm species
-0           3.5  setosa
-1           3.0  setosa
-2           3.2  setosa
-3           3.1  setosa
-4           3.6  setosa
-5           3.9  setosa
-6           3.4  setosa
-7           3.4  setosa
-8           2.9  setosa
-9           3.1  setosa
-********************************************************************************
-aggregation
---------------------------------------------------------------------------------
+####Installation
+    $ pip install -U pandasql
 
-      select
-        species
-        , avg(sepalwidthcm)
-        , min(sepalwidthcm)
-        , max(sepalwidthcm)
-      from
-        iris_df
-      group by
-        species;
-        
+####Bascis
+The main function used in pandasql is sqldf. sqldf accepts 2 parametrs
+   - a sql query string
+   - an set of session/environment variables (locals() or globals())
 
-      species  avg(sepalwidthcm)  min(sepalwidthcm)  max(sepalwidthcm)
-0      setosa              3.418                2.3                4.4
-1  versicolor              2.770                2.0                3.4
-2   virginica              2.974                2.2                3.8
-********************************************************************************
-calling from a helper function
-def pysqldf(q):
-    "add this to your script if you get tired of calling locals()"
-        return sqldf(q, globals())
---------------------------------------------------------------------------------
+    from pandasql import sqldf
 
-      select
-        species
-        , avg(sepalwidthcm)
-        , min(sepalwidthcm)
-        , max(sepalwidthcm)
-      from
-        iris_df
-      group by
-        species;
-        
+Specifying locals() or globals() can get tedious. You can defined a short helper function to fix this.
 
-      species  avg(sepalwidthcm)  min(sepalwidthcm)  max(sepalwidthcm)
-0      setosa              3.418                2.3                4.4
-1  versicolor              2.770                2.0                3.4
-2   virginica              2.974                2.2                3.8
-********************************************************************************
-joins
---------------------------------------------------------------------------------
+    pysqldf = lambda q: sqldf(q, globals())
 
-    select
-        a.*
-    from
-        iris_df a
-    inner join
-        iris_df b
-            on a.species = b.species
-    limit 10;
+####Querying
+pandasql uses <a href="http://www.sqlite.org/lang.html">SQLite syntax</a>. Any pandas dataframes will be automatically detected by pandasql. You can query them as you would any regular SQL table.
 
-   sepallengthcm  sepalwidthcm  petallengthcm  petalwidthcm species
-0            5.1           3.5            1.4           0.2  setosa
-1            5.1           3.5            1.4           0.2  setosa
-2            5.1           3.5            1.4           0.2  setosa
-3            5.1           3.5            1.4           0.2  setosa
-4            5.1           3.5            1.4           0.2  setosa
-5            5.1           3.5            1.4           0.2  setosa
-6            5.1           3.5            1.4           0.2  setosa
-7            5.1           3.5            1.4           0.2  setosa
-8            5.1           3.5            1.4           0.2  setosa
-9            5.1           3.5            1.4           0.2  setosa
-********************************************************************************
-where clause
---------------------------------------------------------------------------------
 
-    select
-        *
-    from
-        iris_df
-    where
-        species = 'virginica'
-        and sepallengthcm > 7.7;
+    >>> from pandasql import sqldf, load_meat, load_births
+    >>> pysqldf = lambda q: sqldf(q, globals())
+    >>> meat = load_meat()
+    >>> births = load_births()
+    >>> print pysqldf("SELECT * FROM meat LIMIT 10;").head()
+                      date  beef  veal  pork  lamb_and_mutton broilers other_chicken turkey
+    0  1944-01-01 00:00:00   751    85  1280               89     None          None   None
+    1  1944-02-01 00:00:00   713    77  1169               72     None          None   None
+    2  1944-03-01 00:00:00   741    90  1128               75     None          None   None
+    3  1944-04-01 00:00:00   650    89   978               66     None          None   None
+    4  1944-05-01 00:00:00   681   106  1029               78     None          None   None
 
-   sepallengthcm  sepalwidthcm  petallengthcm  petalwidthcm    species
-0            7.9           3.8            6.4             2  virginica
-********************************************************************************
-subqueries
---------------------------------------------------------------------------------
+joins and aggregations are also supported
 
-    select
-        *
-    from
-        iris_df
-    where
-        id in (select id from iris_df where sepalwidthcm*sepallengthcm > 25);
+    >>> q = """SELECT
+            m.date, m.beef, b.births
+         FROM
+            meats m
+         INNER JOIN
+            births b
+               ON m.date = b.date;"""
+    >>> joined = pyqldf(q)
+    >>> print joined.head()
+                        date    beef  births
+    403  2012-07-01 00:00:00  2200.8  368450
+    404  2012-08-01 00:00:00  2367.5  359554
+    405  2012-09-01 00:00:00  2016.0  361922
+    406  2012-10-01 00:00:00  2343.7  347625
+    407  2012-11-01 00:00:00  2206.6  320195
 
-   sepallengthcm  sepalwidthcm  petallengthcm  petalwidthcm    species   id
-0            5.7           4.4            1.5           0.4     setosa   15
-1            7.2           3.6            6.1           2.5  virginica  109
-2            7.7           3.8            6.7           2.2  virginica  117
-3            7.9           3.8            6.4           2.0  virginica  131
+    >>> q = "select
+               strftime('%Y', date) as year
+               , SUM(beef) as beef_total
+               FROM
+                  meat
+               GROUP BY
+                  year;"
+    >>> print pysqldf(q).head()
+       year  beef_total
+    0  1944        8801
+    1  1945        9936
+    2  1946        9010
+    3  1947       10096
+    4  1948        8766
+    
 
-</pre>
+
+
+    
+    
+    
+    
+    
+    
