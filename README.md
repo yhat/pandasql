@@ -1,24 +1,24 @@
 pandasql
 ========
 
-<code>pandasql</code> allows you to query <code>pandas</code> DataFrames using SQL syntax. It works similarly to <code>sqldf</code> in R.
+<code>pandasql</code> allows you to query <code>pandas</code> DataFrames using SQL syntax. It works similarly to <code>sqldf</code> in R. <code>pandasql</code> seeks to provide a more familiar way of manipulating and cleaning data for people new to Python or <code>pandasql</code>.
 
 ####Installation
     $ pip install -U pandasql
 
 ####Bascis
-The main function used in pandasql is sqldf. sqldf accepts 2 parametrs
+The main function used in pandasql is <code>sqldf</code>. sqldf accepts 2 parametrs
    - a sql query string
-   - an set of session/environment variables (locals() or globals())
+   - an set of session/environment variables (<code>locals()</code> or <code>globals()</code>)
 
     from pandasql import sqldf
 
-Specifying locals() or globals() can get tedious. You can defined a short helper function to fix this.
+Specifying <code>locals()</code> or <code>globals()</code> can get tedious. You can defined a short helper function to fix this.
 
     pysqldf = lambda q: sqldf(q, globals())
 
 ####Querying
-pandasql uses <a href="http://www.sqlite.org/lang.html">SQLite syntax</a>. Any pandas dataframes will be automatically detected by pandasql. You can query them as you would any regular SQL table.
+<code>pandasql</code> uses <a href="http://www.sqlite.org/lang.html">SQLite syntax</a>. Any <code>pandas</code> dataframes will be automatically detected by pandasql. You can query them as you would any regular SQL table.
 
 
     >>> from pandasql import sqldf, load_meat, load_births
