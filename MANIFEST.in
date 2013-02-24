@@ -1,0 +1,2 @@
+recursive-include pandasql/data *
+include *.txt

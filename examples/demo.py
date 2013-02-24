@@ -1,9 +1,12 @@
 from sklearn.datasets import load_iris
 import pandas as pd
 from pandasql import sqldf
+from pandasql import load_meat, load_births
 import re
 
 
+births = load_births()
+meat = load_meat()
 iris = load_iris()
 iris_df = pd.DataFrame(iris.data, columns=iris.feature_names)
 iris_df['species'] = pd.Factor(iris.target, levels=iris.target_names)
@@ -92,4 +95,18 @@ print "-"*80
 print q
 print pysqldf(q)
 
+q = """
+    SELECT
+        m.*
+        , b.births
+    FROM
+        meat m
+    INNER JOIN
+        births b
+            on m.date = b.date
+    ORDER BY
+        m.date;
+"""
+
+print pysqldf(q).head()
 
