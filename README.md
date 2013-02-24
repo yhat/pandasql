@@ -66,6 +66,7 @@ joins and aggregations are also supported
     3  1947       10096
     4  1948        8766
     
+More information and code samples available in the [examples](https://github.com/yhat/pandasql/blob/master/examples/demo.py) folder or on [our blog](http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html).
 
 
 
