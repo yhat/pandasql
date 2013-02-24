@@ -1,5 +1,5 @@
-Authors
-```````
+##Authors
+
 - Greg Lamp
 - Austin Ogilvie
 
