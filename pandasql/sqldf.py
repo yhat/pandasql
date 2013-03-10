@@ -1,7 +1,6 @@
 import sqlite3 as sqlite
 import sqlparse
 from sqlparse.tokens import Whitespace
-import pandas as pd
 from pandas.io.sql import write_frame, frame_query
 import os
 import re
@@ -13,7 +12,7 @@ def _extract_table_names(q):
     next_is_table = False
     for query in sqlparse.parse(q):
         for token in query.tokens:
-            if token.value.upper()=="FROM" or "JOIN" in token.value.upper():
+            if token.value.upper() == "FROM" or "JOIN" in token.value.upper():
                 next_is_table = True
             elif token.ttype is Whitespace:
                 continue
@@ -34,10 +33,10 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env): 
+def sqldf(q, env):
     """
     query pandas data frames using sql syntax
-    
+
     q: a sql query using DataFrames as tables
     env: variable environment; you must include locals() or globals() in your function
          call to allow sqldf to access the variables in your python environment
@@ -53,18 +52,18 @@ def sqldf(q, env):
     sqldf("select * from df;", locals())
     sqldf("select avg(x) from df;", locals())
     """
-    with sqlite.connect('.pandasql.db', detect_types=sqlite.PARSE_DECLTYPES) as conn:
-        tables = _extract_table_names(q)
-        for table in tables:
-            if table not in env:
-                raise Exception("%s not found" % table)
-            df = env[table]
-            _write_table(table, df, conn)
-        try:
-            result = frame_query(q, conn)    
-        except:
-            result = None
-        finally:
-            os.remove('.pandasql.db')
-        return result
-
+    conn = sqlite.connect('.pandasql.db', detect_types=sqlite.PARSE_DECLTYPES)
+    tables = _extract_table_names(q)
+    for table in tables:
+        if table not in env:
+            raise Exception("%s not found" % table)
+        df = env[table]
+        _write_table(table, df, conn)
+    try:
+        result = frame_query(q, conn)
+    except:
+        result = None
+    finally:
+        conn.close()
+        os.remove('.pandasql.db')
+    return result
