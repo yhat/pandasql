@@ -4,9 +4,6 @@ import string
 import unittest
 
 
-
-
-
 class PandaSQLTest(unittest.TestCase):
 
     def setUp(self):
