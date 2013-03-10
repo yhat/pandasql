@@ -8,6 +8,7 @@ import re
 
 def _extract_table_names(q):
     "extracts table names from a sql query"
+
     tables = set()
     next_is_table = False
     for query in sqlparse.parse(q):
@@ -24,6 +25,7 @@ def _extract_table_names(q):
 
 def _write_table(tablename, df, conn):
     "writes a dataframe to the sqlite database"
+
     for col in df.columns:
         if re.search("[() ]", col):
             msg = "please follow SQLite column naming conventions: "
@@ -38,8 +40,8 @@ def sqldf(q, env):
     query pandas data frames using sql syntax
 
     q: a sql query using DataFrames as tables
-    env: variable environment; you must include locals() or globals() in your function
-         call to allow sqldf to access the variables in your python environment
+    env: variable environment; locals() or globals() in your function
+         allows sqldf to access the variables in your python environment
 
     Example
     -----------------------------------------
@@ -52,10 +54,13 @@ def sqldf(q, env):
     sqldf("select * from df;", locals())
     sqldf("select avg(x) from df;", locals())
     """
+
     conn = sqlite.connect('.pandasql.db', detect_types=sqlite.PARSE_DECLTYPES)
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
+            conn.close()
+            os.remove('.pandasql.db')
             raise Exception("%s not found" % table)
         df = env[table]
         _write_table(table, df, conn)
