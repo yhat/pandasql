@@ -35,13 +35,16 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env):
+def sqldf(q, env, sqlite_database=':memory:'):
     """
     query pandas data frames using sql syntax
 
     q: a sql query using DataFrames as tables
     env: variable environment; locals() or globals() in your function
          allows sqldf to access the variables in your python environment
+    sqlite_database : sqlite database used
+         default is ':memory:' for performance and simplicity
+         default as in previous version would be '.pandasql.db'
 
     Example
     -----------------------------------------
@@ -55,12 +58,13 @@ def sqldf(q, env):
     sqldf("select avg(x) from df;", locals())
     """
 
-    conn = sqlite.connect('.pandasql.db', detect_types=sqlite.PARSE_DECLTYPES)
+    conn = sqlite.connect(sqlite_database, detect_types=sqlite.PARSE_DECLTYPES)
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
             conn.close()
-            os.remove('.pandasql.db')
+            if sqlite_database != ':memory:' :
+                os.remove(sqlite_database)
             raise Exception("%s not found" % table)
         df = env[table]
         _write_table(table, df, conn)
@@ -70,5 +74,6 @@ def sqldf(q, env):
         result = None
     finally:
         conn.close()
-        os.remove('.pandasql.db')
+        if sqlite_database != ':memory:' :
+            os.remove(sqlite_database)
     return result
