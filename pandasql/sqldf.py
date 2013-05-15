@@ -59,7 +59,7 @@ def sqldf(q, env, dbtype=':memory:'):
     """
 
     sqlite_database=':memory:'
-    if dbtype!=':memory:' and dbtype!=':memory:' :
+    if dbtype!=':memory:' and dbtype!='memory' :
         sqlite_database='.pandasql.db'
     conn = sqlite.connect(sqlite_database, detect_types=sqlite.PARSE_DECLTYPES)
     tables = _extract_table_names(q)
