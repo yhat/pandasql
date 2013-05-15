@@ -35,16 +35,16 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env, sqlite_database=':memory:'):
+def sqldf(q, env, dbtype=':memory:'):
     """
     query pandas data frames using sql syntax
 
     q: a sql query using DataFrames as tables
     env: variable environment; locals() or globals() in your function
          allows sqldf to access the variables in your python environment
-    sqlite_database : sqlite database used
-         default is ':memory:' for performance and simplicity
-         default as in previous version would be '.pandasql.db'
+    dbtype: memory/disk
+        default is in memory; if not memory then it will be temporarily
+        persisted to disk
 
     Example
     -----------------------------------------
