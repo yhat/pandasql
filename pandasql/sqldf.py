@@ -91,12 +91,12 @@ def sqldf(q, env, inmemory=True):
                 _write_table(table, df_real, conn)
             else:
                 #mono-column case with not an integer at first record
-                if not type(df[0])=='builtins.int' :
+                if not type(df[0])==type(1) :
                     df_real=pd.DataFrame(df, columns=[ 'c0' ])
                     _write_table(table, df_real, conn)
                 else:    
-                    #creating floats to workaround a bug (in  ??) if first record is an integer
-                    df_real=pd.DataFrame([x*1.0 for x in df], columns=[ 'c0' ])
+                    #creating a second empty column to workaround a bug (in  ??) 
+                    df_real=pd.DataFrame([(x ,'') for x in df], columns=[ 'c0','c1' ])
                     print('r')
                     _write_table(table, df_real, conn)    
         else :
