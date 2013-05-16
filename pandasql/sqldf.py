@@ -35,7 +35,7 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env, dbtype=':memory:'):
+def sqldf(q, env, inmemory=True):
     """
     query pandas data frames using sql syntax
 
@@ -58,13 +58,17 @@ def sqldf(q, env, dbtype=':memory:'):
     sqldf("select avg(x) from df;", locals())
     """
 
-    conn = sqlite.connect(sqlite_database, detect_types=sqlite.PARSE_DECLTYPES)
+    if inmemory:
+        dbname = ":memory:"
+    else:
+        dbname = ".pandasql.db"
+    conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES)
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
             conn.close()
-            if sqlite_database != ':memory:' :
-                os.remove(sqlite_database)
+            if not inmemory :
+                os.remove(dbname)
             raise Exception("%s not found" % table)
         df = env[table]
         _write_table(table, df, conn)
@@ -74,6 +78,7 @@ def sqldf(q, env, dbtype=':memory:'):
         result = None
     finally:
         conn.close()
-        if sqlite_database != ':memory:' :
-            os.remove(sqlite_database)
+        if not inmemory:
+            os.remove(dbname)
     return result
+
