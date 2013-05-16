@@ -58,6 +58,9 @@ def sqldf(q, env, dbtype=':memory:'):
     sqldf("select avg(x) from df;", locals())
     """
 
+    sqlite_database=':memory:'
+    if dbtype!=':memory:' and dbtype!='memory' :
+        sqlite_database='.pandasql.db'
     conn = sqlite.connect(sqlite_database, detect_types=sqlite.PARSE_DECLTYPES)
     tables = _extract_table_names(q)
     for table in tables:
@@ -67,7 +70,21 @@ def sqldf(q, env, dbtype=':memory:'):
                 os.remove(sqlite_database)
             raise Exception("%s not found" % table)
         df = env[table]
-        _write_table(table, df, conn)
+        if hasattr(df, 'columns') :
+            #standard case : we have a panda frame
+            _write_table(table, df, conn)
+        elif hasattr(df,'items') and hasattr(dict,'keys'):
+            #other case :a dictionnary
+            df_list=[(k,v) for k, v in df.items()]
+            df_real=pd.DataFrame(df_list, columns=['c'+str(i) for i in range(len(df_list[0]))])
+            _write_table(table, df_real, conn)
+        elif hasattr(df,'index') :
+            #other case : we suppose we have a simple python list
+            #we build columns title "Ci" where i is going from 1 to the number of columns-1
+            df_real=pd.DataFrame(df, columns=['c'+str(i) for i in range(len(df[0]))])
+            _write_table(table, df_real, conn)
+        else :
+            raise Exception("%s is not a panda object, a list, nor a dictionary" % table)
     try:
         result = frame_query(q, conn)
     except:
