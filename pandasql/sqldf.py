@@ -97,7 +97,6 @@ def sqldf(q, env, inmemory=True):
                 else:    
                     #creating a second empty column to workaround a bug (in  ??) 
                     df_real=pd.DataFrame([(x ,'') for x in df], columns=[ 'c0','c1' ])
-                    print('r')
                     _write_table(table, df_real, conn)    
         else :
             raise Exception("%s is not a panda object, a list, nor a dictionary" % table)
