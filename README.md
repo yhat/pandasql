@@ -1,7 +1,7 @@
 pandasql
 ========
 
-<code>pandasql</code> allows you to query <code>pandas</code> DataFrames using SQL syntax. It works similarly to <code>sqldf</code> in R. <code>pandasql</code> seeks to provide a more familiar way of manipulating and cleaning data for people new to Python or <code>pandasql</code>.
+<code>pandasql</code> allows you to query <code>pandas</code> DataFrames using SQL syntax. It works similarly to <code>sqldf</code> in R. <code>pandasql</code> seeks to provide a more familiar way of manipulating and cleaning data for people new to Python or <code>pandas</code>.
 
 ####Installation
     $ pip install -U pandasql
