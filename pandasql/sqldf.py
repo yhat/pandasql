@@ -1,6 +1,7 @@
 import sqlite3 as sqlite
 import sqlparse
 from sqlparse.tokens import Whitespace
+import pandas as pd 
 from pandas.io.sql import write_frame, frame_query
 import os
 import re
@@ -71,6 +72,21 @@ def sqldf(q, env, inmemory=True):
                 os.remove(dbname)
             raise Exception("%s not found" % table)
         df = env[table]
+        #we accept pandas Dataframe, and also dictionaries, lists, tuples
+        #we'll just convert them to Pandas Dataframe
+        if isinstance(df, dict):
+            #dictionary case
+            df=pd.DataFrame([(k,v) for k, v in df.items()], columns=['c0','c1'])
+        elif isinstance(df,(tuple, list)) :
+            #tuple and list case
+            if isinstance(df[0], (tuple, list)):
+                #multiple-columns
+                df=pd.DataFrame(df, columns=['c'+str(i) for i in range(df[0])])
+            else:
+                #mono-column
+                df=pd.DataFrame([(r,) for r in df], columns=['c0'])
+        if not isinstance(df,pd.core.frame.DataFrame) :
+            raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % table)
         _write_table(table, df, conn)
     try:
         result = frame_query(q, conn)
