@@ -1,11 +1,45 @@
 import sqlite3 as sqlite
 import sqlparse
 from sqlparse.tokens import Whitespace
-import pandas as pd 
+import pandas as pd
+import numpy as np
 from pandas.io.sql import write_frame, frame_query
 import os
 import re
 
+def _ensure_data_frame(obj, name):
+    """
+    obj a python object to be converted to a DataFrame
+
+    take an object and make sure that it's a pandas data frame
+    """
+    #we accept pandas Dataframe, and also dictionaries, lists, tuples
+        #we'll just convert them to Pandas Dataframe
+    if isinstance(obj, pd.DataFrame):
+        df = obj
+    elif isinstance(obj, (tuple, list)) :
+        #tuple and list case
+        if len(obj)==0:
+            return pd.Dataframe()
+
+        firstrow = obj[0]
+
+        if isinstance(firstrow, (tuple, list)):
+            #multiple-columns
+            colnames = ["c%d" % i for i in range(len(firstrow))]
+            df = pd.DataFrame(obj, columns=colnames)
+        else:
+            #mono-column
+            df = pd.DataFrame(obj, columns=["c0"])
+
+    if not isinstance(df, pd.DataFrame) :
+        raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % name)
+
+    for col in df:
+        if df[col].dtype==np.int64:
+            df[col] = df[col].astype(np.float)
+
+    return df
 
 def _extract_table_names(q):
     "extracts table names from a sql query"
@@ -49,6 +83,8 @@ def sqldf(q, env, inmemory=True):
 
     Example
     -----------------------------------------
+
+    # example with a data frame
     df = pd.DataFame({
         x: range(100),
         y: range(100)
@@ -57,6 +93,9 @@ def sqldf(q, env, inmemory=True):
     from pandasql import sqldf
     sqldf("select * from df;", locals())
     sqldf("select avg(x) from df;", locals())
+
+    #example with a list
+
     """
 
     if inmemory:
@@ -72,22 +111,9 @@ def sqldf(q, env, inmemory=True):
                 os.remove(dbname)
             raise Exception("%s not found" % table)
         df = env[table]
-        #we accept pandas Dataframe, and also dictionaries, lists, tuples
-        #we'll just convert them to Pandas Dataframe
-        if isinstance(df, dict):
-            #dictionary case
-            df=pd.DataFrame([(k,v) for k, v in df.items()], columns=['c0','c1'])
-        elif isinstance(df,(tuple, list)) :
-            #tuple and list case
-            if isinstance(df[0], (tuple, list)):
-                #multiple-columns
-                df=pd.DataFrame(df, columns=['c'+str(i) for i in range(df[0])])
-            else:
-                #mono-column
-                df=pd.DataFrame([(r,) for r in df], columns=['c0'])
-        if not isinstance(df,pd.core.frame.DataFrame) :
-            raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % table)
+        df = _ensure_data_frame(df, table)
         _write_table(table, df, conn)
+
     try:
         result = frame_query(q, conn)
     except:

@@ -60,6 +60,27 @@ class PandaSQLTest(unittest.TestCase):
         result = sqldf(q, locals())
         self.assertEquals(len(result), 20)
 
+    def test_query_single_list(self):
+
+        mylist = range(10)
+
+        result = sqldf("SELECT * FROM mylist", locals())
+        self.assertEquals(len(result), 10)
+
+    def test_query_list_of_lists(self):
+
+        mylist = [range(10), range(10)]
+
+        result = sqldf("SELECT * FROM mylist", locals())
+        self.assertEquals(len(result), 2)
+
+    def test_query_list_of_tuples(self):
+
+        mylist = [tuple(range(10)), tuple(range(10))]
+
+        result = sqldf("SELECT * FROM mylist", locals())
+        self.assertEquals(len(result), 2)
+
 
 if __name__=="__main__":
     unittest.main()

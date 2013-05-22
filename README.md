@@ -11,10 +11,9 @@ The main function used in pandasql is <code>sqldf</code>. sqldf accepts 2 parame
    - a sql query string
    - an set of session/environment variables (<code>locals()</code> or <code>globals()</code>)
 
-    from pandasql import sqldf
-
 Specifying <code>locals()</code> or <code>globals()</code> can get tedious. You can defined a short helper function to fix this.
 
+    from pandasql import sqldf
     pysqldf = lambda q: sqldf(q, globals())
 
 ####Querying
