@@ -6,7 +6,7 @@ required = ['sqlparse==0.1.6']
 
 setup(
     name="pandasql",
-    version="0.3.0",
+    version="0.3.1",
     author="Greg Lamp",
     author_email="greg@yhathq.com",
     url="https://github.com/yhat/pandasql/",
@@ -15,7 +15,7 @@ setup(
     package_dir={"pandasql": "pandasql"},
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
-    long_description=open("README.md").read(),
+    long_description=open("README.txt").read(),
     install_requires=required,
 )
 
