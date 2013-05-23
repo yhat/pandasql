@@ -31,6 +31,9 @@ def _ensure_data_frame(obj, name):
         else:
             #mono-column
             df = pd.DataFrame(obj, columns=["c0"])
+    elif isinstance(obj, dict) :
+            #dictionary case
+            df=pd.DataFrame([(k,v) for k, v in obj.items()], columns=["c0","c1"])
 
     if not isinstance(df, pd.DataFrame) :
         raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % name)

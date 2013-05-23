@@ -81,6 +81,11 @@ class PandaSQLTest(unittest.TestCase):
         result = sqldf("SELECT * FROM mylist", locals())
         self.assertEqual(len(result), 2)
 
+    def test_query_dictionary(self):
+
+        mylist = {'a': 1, 'c': 3, 'b': 2}
+        result = sqldf("SELECT max(c0),sum(c1) FROM mylist", locals())
+        self.assertEqual(result.values.tolist(), [['c', 6]])
 
 if __name__=="__main__":
     unittest.main()
