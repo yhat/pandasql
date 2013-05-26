@@ -70,13 +70,15 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env, inmemory=True):
+def sqldf(q, env=dict(globals(),**locals()), inmemory=True):
     """
     query pandas data frames using sql syntax
 
     q: a sql query using DataFrames as tables
     env: variable environment; locals() or globals() in your function
          allows sqldf to access the variables in your python environment
+         default is locals() otherwise globals()
+
     dbtype: memory/disk
         default is in memory; if not memory then it will be temporarily
         persisted to disk
@@ -115,7 +117,7 @@ def sqldf(q, env, inmemory=True):
         _write_table(table, df, conn)
 
     try:
-        result = frame_query(q, conn)
+        result = frame_query(q, conn, params=env)
     except:
         result = None
     finally:
