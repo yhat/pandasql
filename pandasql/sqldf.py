@@ -70,7 +70,7 @@ def _write_table(tablename, df, conn):
     write_frame(df, name=tablename, con=conn, flavor='sqlite')
 
 
-def sqldf(q, env=dict(globals(),**locals()), inmemory=True):
+def sqldf(q, env, inmemory=True):
     """
     query pandas data frames using sql syntax
 
