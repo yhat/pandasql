@@ -69,7 +69,7 @@ More information and code samples available in the [examples](https://github.com
 
 
 
-    
+[![Analytics](https://ga-beacon.appspot.com/UA-46996803-1/pandasql/README.md)](https://github.com/yhat/pandasql)    
     
     
     
