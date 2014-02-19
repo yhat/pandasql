@@ -1,30 +1,42 @@
 pandasql
 ========
 
-pandasql allows you to query pandas DataFrames using SQL syntax. It works similarly to sqldf in R. pandasql seeks to provide a more familiar way of manipulating and cleaning data for people new to Python or pandas.
+``pandasql`` allows you to query ``pandas`` DataFrames using SQL syntax.
+It works similarly to ``sqldf`` in R. ``pandasql`` seeks to provide a
+more familiar way of manipulating and cleaning data for people new to
+Python or ``pandas``.
 
 Installation
-===========
-.. code:: python
+^^^^^^^^^^^^
+
+::
+
     $ pip install -U pandasql
 
 Bascis
-===========
-The main function used in pandasql is sqldf. sqldf accepts 2 parametrs
-   - a sql query string
-   - an set of session/environment variables (locals() or globals())
+^^^^^^
 
-Specifying locals() or globals() can get tedious. You can defined a short helper function to fix this.
+The main function used in pandasql is ``sqldf``. sqldf accepts 2
+parametrs - a sql query string - an set of session/environment variables
+(``locals()`` or ``globals()``)
 
-.. code:: python
+Specifying ``locals()`` or ``globals()`` can get tedious. You can
+defined a short helper function to fix this.
+
+::
+
     from pandasql import sqldf
     pysqldf = lambda q: sqldf(q, globals())
 
 Querying
-===========
-pandasql uses <a href="http://www.sqlite.org/lang.html">SQLite syntax</a>. Any pandas dataframes will be automatically detected by pandasql. You can query them as you would any regular SQL table.
+^^^^^^^^
 
-.. code:: python
+``pandasql`` uses `SQLite syntax <http://www.sqlite.org/lang.html>`__.
+Any ``pandas`` dataframes will be automatically detected by pandasql.
+You can query them as you would any regular SQL table.
+
+::
+
     >>> from pandasql import sqldf, load_meat, load_births
     >>> pysqldf = lambda q: sqldf(q, globals())
     >>> meat = load_meat()
@@ -37,9 +49,8 @@ pandasql uses <a href="http://www.sqlite.org/lang.html">SQLite syntax</a>. Any p
     3  1944-04-01 00:00:00   650    89   978               66     None          None   None
     4  1944-05-01 00:00:00   681   106  1029               78     None          None   None
 
-joins and aggregations are also supported
+    joins and aggregations are also supported
 
-.. code:: python
     >>> q = """SELECT
             m.date, m.beef, b.births
          FROM
@@ -70,6 +81,13 @@ joins and aggregations are also supported
     2  1946        9010
     3  1947       10096
     4  1948        8766
-    
-More information and code samples available in the [examples](https://github.com/yhat/pandasql/blob/master/examples/demo.py) folder or on [our blog](http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html).
 
+More information and code samples available in the
+`examples <https://github.com/yhat/pandasql/blob/master/examples/demo.py>`__
+folder or on `our
+blog <http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html>`__.
+
+|Analytics|
+
+.. |Analytics| image:: https://ga-beacon.appspot.com/UA-46996803-1/pandasql/README.md
+   :target: https://github.com/yhat/pandasql
