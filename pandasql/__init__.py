@@ -1,4 +1,4 @@
-from sqldf import sqldf
+from .sqldf import sqldf
 import os
 import pandas as pd
 
