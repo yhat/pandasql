@@ -1,7 +1,9 @@
 pandasql
 ========
 
-`pandasql` allows you to query `pandas` DataFrames using SQL syntax. It works similarly to `sqldf` in R. `pandasql` seeks to provide a more familiar way of manipulating and cleaning data for people new to Python or `pandas`.
+`pandasql` allows you to query `pandas` DataFrames using SQL syntax. It works 
+similarly to `sqldf` in R. `pandasql` seeks to provide a more familiar way of 
+manipulating and cleaning data for people new to Python or `pandas`.
 
 ####Installation
 ```
@@ -13,15 +15,20 @@ The main function used in pandasql is `sqldf`. sqldf accepts 2 parametrs
    - a sql query string
    - an set of session/environment variables (`locals()` or `globals()`)
 
-Specifying `locals()` or `globals()` can get tedious. You can defined a short helper function to fix this.
+Specifying `locals()` or `globals()` can get tedious. You can defined a short 
+helper function to fix this.
 
     from pandasql import sqldf
     pysqldf = lambda q: sqldf(q, globals())
 
 ####Querying
-`pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` dataframes will be automatically detected by pandasql. You can query them as you would any regular SQL table.
+`pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` 
+dataframes will be automatically detected by `pandasql`. You can query them as you
+ would any regular SQL table.
+
 
 ```
+$ python
 >>> from pandasql import sqldf, load_meat, load_births
 >>> pysqldf = lambda q: sqldf(q, globals())
 >>> meat = load_meat()
@@ -68,7 +75,8 @@ joins and aggregations are also supported
 4  1948        8766
 ```
 
-More information and code samples available in the [examples](https://github.com/yhat/pandasql/blob/master/examples/demo.py) folder or on [our blog](http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html).
+More information and code samples available in the [examples](https://github.com/yhat/pandasql/blob/master/examples/demo.py)
+ folder or on [our blog](http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html).
 
 
 
