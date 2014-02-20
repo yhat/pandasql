@@ -32,11 +32,12 @@ Querying
 ^^^^^^^^
 
 ``pandasql`` uses `SQLite syntax <http://www.sqlite.org/lang.html>`__.
-Any ``pandas`` dataframes will be automatically detected by pandasql.
-You can query them as you would any regular SQL table.
+Any ``pandas`` dataframes will be automatically detected by
+``pandasql``. You can query them as you would any regular SQL table.
 
 ::
 
+    $ python
     >>> from pandasql import sqldf, load_meat, load_births
     >>> pysqldf = lambda q: sqldf(q, globals())
     >>> meat = load_meat()
@@ -49,7 +50,9 @@ You can query them as you would any regular SQL table.
     3  1944-04-01 00:00:00   650    89   978               66     None          None   None
     4  1944-05-01 00:00:00   681   106  1029               78     None          None   None
 
-    joins and aggregations are also supported
+joins and aggregations are also supported
+
+::
 
     >>> q = """SELECT
             m.date, m.beef, b.births
