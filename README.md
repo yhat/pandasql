@@ -40,9 +40,10 @@ $ python
 2  1944-03-01 00:00:00   741    90  1128               75     None          None   None
 3  1944-04-01 00:00:00   650    89   978               66     None          None   None
 4  1944-05-01 00:00:00   681   106  1029               78     None          None   None
+```
 
 joins and aggregations are also supported
-
+```
 >>> q = """SELECT
         m.date, m.beef, b.births
      FROM
