@@ -11,7 +11,7 @@ $ pip install -U pandasql
 ```
 
 ####Bascis
-The main function used in pandasql is `sqldf`. sqldf accepts 2 parametrs
+The main function used in pandasql is `sqldf`. `sqldf` accepts 2 parametrs
    - a sql query string
    - an set of session/environment variables (`locals()` or `globals()`)
 
@@ -23,8 +23,8 @@ helper function to fix this.
 
 ####Querying
 `pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` 
-dataframes will be automatically detected by `pandasql`. You can query them as you
- would any regular SQL table.
+dataframes will be automatically detected by `pandasql`. You can query them as 
+you would any regular SQL table.
 
 
 ```
