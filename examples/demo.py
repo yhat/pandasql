@@ -9,7 +9,7 @@ births = load_births()
 meat = load_meat()
 iris = load_iris()
 iris_df = pd.DataFrame(iris.data, columns=iris.feature_names)
-iris_df['species'] = pd.Factor(iris.target, levels=iris.target_names)
+iris_df['species'] = pd.Categorical(iris.target, levels=iris.target_names)
 iris_df.columns = [re.sub("[() ]", "", col) for col in iris_df.columns]
 
 print sqldf("select * from iris_df limit 10;", locals())
