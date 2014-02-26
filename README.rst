@@ -16,7 +16,7 @@ Installation
 Bascis
 ^^^^^^
 
-The main function used in pandasql is ``sqldf``. sqldf accepts 2
+The main function used in pandasql is ``sqldf``. ``sqldf`` accepts 2
 parametrs - a sql query string - an set of session/environment variables
 (``locals()`` or ``globals()``)
 
