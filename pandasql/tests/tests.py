@@ -60,6 +60,18 @@ class PandaSQLTest(unittest.TestCase):
         result = sqldf(q, locals())
         self.assertEqual(len(result), 20)
 
+    def test_query_with_sqlite_parameters(self):
+        mylist = [ ('a',1), ('b',  2)]
+        myvariable=10
+
+        #my dico is : a personal definition, then locals() , then globals()
+        mydico=dict(globals(),**locals())
+        mydico['myanswer']=42
+
+        #sqlite will find parameters by name (:myvariable)
+        result = sqldf("SELECT  max(:myanswer),sum(:myvariable)  FROM mylist", mydico)
+        self.assertEqual(result.values.tolist(), [[42, 20]])
+
     def test_query_single_list(self):
 
         mylist = [i for i in range(10)]
