@@ -4,6 +4,7 @@ from sqlparse.tokens import Whitespace
 import pandas as pd
 import numpy as np
 from pandas.io.sql import write_frame, frame_query
+import hashlib
 import os
 import re
 
@@ -13,8 +14,8 @@ def _ensure_data_frame(obj, name):
 
     take an object and make sure that it's a pandas data frame
     """
-    #we accept pandas Dataframe, and also dictionaries, lists, tuples
-        #we'll just convert them to Pandas Dataframe
+    # we accept pandas Dataframe, and also dictionaries, lists, tuples
+    # we'll just convert them to Pandas Dataframe
     if isinstance(obj, pd.DataFrame):
         df = obj
     elif isinstance(obj, (tuple, list)) :
@@ -74,28 +75,33 @@ def sqldf(q, env, inmemory=True):
     """
     query pandas data frames using sql syntax
 
-    q: a sql query using DataFrames as tables
-    env: variable environment; locals() or globals() in your function
-         allows sqldf to access the variables in your python environment
-    dbtype: memory/disk
-        default is in memory; if not memory then it will be temporarily
-        persisted to disk
+    Parameters
+    ----------
+    q: string
+        a sql query using DataFrames as tables
+    env: locals() or globals()
+        variable environment; locals() or globals() in your function
+        allows sqldf to access the variables in your python environment
+    dbtype: bool
+        memory/disk; default is in memory; if not memory then it will be 
+        temporarily persisted to disk
 
-    Example
-    -----------------------------------------
+    Returns
+    -------
+    result: DataFrame
+        returns a DataFrame with your query's result
 
-    # example with a data frame
-    df = pd.DataFame({
-        x: range(100),
-        y: range(100)
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({
+        "x": range(100),
+        "y": range(100)
     })
-
-    from pandasql import sqldf
-    sqldf("select * from df;", locals())
-    sqldf("select avg(x) from df;", locals())
-
-    #example with a list
-
+    >>> from pandasql import sqldf
+    >>> sqldf("select * from df;", globals())
+    >>> sqldf("select * from df;", locals())
+    >>> sqldf("select avg(x) from df;", locals())
     """
 
     if inmemory:

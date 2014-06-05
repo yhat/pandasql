@@ -6,7 +6,7 @@ required = ['sqlparse==0.1.6']
 
 setup(
     name="pandasql",
-    version="0.4.2",
+    version="0.4.3",
     author="Greg Lamp",
     author_email="greg@yhathq.com",
     url="https://github.com/yhat/pandasql/",
