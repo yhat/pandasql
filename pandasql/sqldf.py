@@ -54,10 +54,13 @@ def _extract_table_names(q):
             elif token.ttype is Whitespace:
                 continue
             elif token.ttype is None and next_is_table:
-                tables.add(token.value)
-                next_is_table = False
+                # check if we've got a subquery
+                if "SELECT" in token.value.upper() and "FROM" in token.value.upper():
+                    tables.union(set(_extract_table_names(token.value)))
+                else:
+                    tables.add(token.value)
+                    next_is_table = False
     return list(tables)
-
 
 def _write_table(tablename, df, conn):
     "writes a dataframe to the sqlite database"
