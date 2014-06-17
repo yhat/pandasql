@@ -3,7 +3,7 @@ import sqlparse
 from sqlparse.tokens import Whitespace
 import pandas as pd
 import numpy as np
-from pandas.io.sql import write_frame, frame_query
+from pandas.io.sql import to_sql, read_sql
 import hashlib
 import os
 import re
@@ -71,7 +71,7 @@ def _write_table(tablename, df, conn):
             msg += "http://www.sqlite.org/lang_keywords.html"
             raise Exception(msg)
 
-    write_frame(df, name=tablename, con=conn, flavor='sqlite')
+    to_sql(df, name=tablename, con=conn, flavor='sqlite')
 
 
 def sqldf(q, env, inmemory=True):
@@ -124,7 +124,7 @@ def sqldf(q, env, inmemory=True):
         _write_table(table, df, conn)
 
     try:
-        result = frame_query(q, conn)
+        result = read_sql(q, conn)
     except:
         result = None
     finally:
