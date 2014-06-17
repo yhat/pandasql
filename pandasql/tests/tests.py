@@ -80,7 +80,12 @@ class PandaSQLTest(unittest.TestCase):
 
         result = sqldf("SELECT * FROM mylist", locals())
         self.assertEqual(len(result), 2)
-
+    
+    def test_subquery(self):
+        kermit = pd.DataFrame({"x": range(10)})
+        q = "select * from (select * from kermit) tbl limit 2;"
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 2)
 
 if __name__=="__main__":
     unittest.main()

@@ -56,7 +56,9 @@ def _extract_table_names(q):
             elif token.ttype is None and next_is_table:
                 # check if we've got a subquery
                 if "SELECT" in token.value.upper() and "FROM" in token.value.upper():
-                    tables.union(set(_extract_table_names(token.value)))
+                    subquery = token.value.lstrip("(").rstrip(")")
+                    tables = tables.union(set(_extract_table_names(subquery)))
+                    next_is_table = False
                 else:
                     tables.add(token.value)
                     next_is_table = False
