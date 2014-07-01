@@ -36,6 +36,8 @@ def _ensure_data_frame(obj, name):
     for col in df:
         if df[col].dtype==np.int64:
             df[col] = df[col].astype(np.float)
+        elif isinstance(df[col].get(0), pd.tslib.Timestamp):
+            df[col] = df[col].apply(lambda x: str(x))
 
     return df
 
@@ -108,14 +110,12 @@ def sqldf(q, env, inmemory=True):
         _write_table(table, df, conn)
 
     try:
-        result = read_sql(q, conn)
+        result = read_sql(q, conn, index_col=None)
     except Exception, e:
-        print str(e)
         result = None
     finally:
         conn.close()
         if not inmemory:
-            pass
-            # os.remove(dbname)
+            os.remove(dbname)
     return result
 
