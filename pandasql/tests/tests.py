@@ -86,6 +86,37 @@ class PandaSQLTest(unittest.TestCase):
         q = "select * from (select * from kermit) tbl limit 2;"
         result = sqldf(q, locals())
         self.assertEqual(len(result), 2)
+    
+    def test_in(self):
+        courseData = {
+            'courseCode': ['TM351','TU100','M269'],
+            'points':[30,60,30],
+            'level':['3','1','2']
+        }
+        course_df = pd.DataFrame(courseData)
+        q = "SELECT * FROM course_df WHERE courseCode IN ( 'TM351', 'TU100' );"
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 2)
+
+    def test_in_with_subquery(self):
+        programData = {
+            'courseCode': ['TM351','TM351','TM351','TU100','TU100','TU100','M269','M269','M269'],
+            'programCode':['AB1','AB2','AB3','AB1','AB3','AB4','AB3','AB4','AB5']
+             }
+        program_df = pd.DataFrame(programData)
+        
+        courseData = {
+            'courseCode': ['TM351','TU100','M269'],
+            'points':[30,60,30],
+            'level':['3','1','2']
+        }
+        course_df = pd.DataFrame(courseData)
+
+        q = '''
+            SELECT * FROM course_df WHERE courseCode IN ( SELECT DISTINCT courseCode FROM program_df ) ;
+          '''
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 3)
 
 if __name__=="__main__":
     unittest.main()

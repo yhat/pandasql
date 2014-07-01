@@ -1,12 +1,9 @@
 import sqlite3 as sqlite
-import sqlparse
-from sqlparse.tokens import Whitespace
 import pandas as pd
 import numpy as np
 from pandas.io.sql import to_sql, read_sql
-import hashlib
-import os
 import re
+import os
 
 def _ensure_data_frame(obj, name):
     """
@@ -44,25 +41,10 @@ def _ensure_data_frame(obj, name):
 
 def _extract_table_names(q):
     "extracts table names from a sql query"
-
-    tables = set()
-    next_is_table = False
-    for query in sqlparse.parse(q):
-        for token in query.tokens:
-            if token.value.upper() == "FROM" or "JOIN" in token.value.upper():
-                next_is_table = True
-            elif token.ttype is Whitespace:
-                continue
-            elif token.ttype is None and next_is_table:
-                # check if we've got a subquery
-                if "SELECT" in token.value.upper() and "FROM" in token.value.upper():
-                    subquery = token.value.lstrip("(").rstrip(")")
-                    tables = tables.union(set(_extract_table_names(subquery)))
-                    next_is_table = False
-                else:
-                    tables.add(token.value)
-                    next_is_table = False
-    return list(tables)
+    # a good old fashioned regex. turns out this worked better than actually parsing the code
+    rgx = '(?:FROM|JOIN)\s+([A-Za-z0-9_]+)'
+    tables = re.findall(rgx, q, re.IGNORECASE)
+    return list(set(tables))
 
 def _write_table(tablename, df, conn):
     "writes a dataframe to the sqlite database"
@@ -127,11 +109,13 @@ def sqldf(q, env, inmemory=True):
 
     try:
         result = read_sql(q, conn)
-    except:
+    except Exception, e:
+        print str(e)
         result = None
     finally:
         conn.close()
         if not inmemory:
-            os.remove(dbname)
+            pass
+            # os.remove(dbname)
     return result
 
