@@ -10,7 +10,7 @@ manipulating and cleaning data for people new to Python or `pandas`.
 $ pip install -U pandasql
 ```
 
-####Bascis
+####Basics
 The main function used in pandasql is `sqldf`. `sqldf` accepts 2 parametrs
    - a sql query string
    - an set of session/environment variables (`locals()` or `globals()`)

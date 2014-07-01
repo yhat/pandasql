@@ -13,7 +13,7 @@ Installation
 
     $ pip install -U pandasql
 
-Bascis
+Basics
 ^^^^^^
 
 The main function used in pandasql is ``sqldf``. ``sqldf`` accepts 2
