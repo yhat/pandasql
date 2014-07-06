@@ -97,7 +97,8 @@ def sqldf(q, env, inmemory=True):
         dbname = ":memory:"
     else:
         dbname = ".pandasql.db"
-    conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES)
+    # conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES)
+    conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES|sqlite.PARSE_COLNAMES)
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
