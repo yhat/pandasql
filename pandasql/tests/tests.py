@@ -124,6 +124,11 @@ class PandaSQLTest(unittest.TestCase):
         result = sqldf("SELECT * FROM meat LIMIT 10;", locals())
         self.assertEqual(len(result), 10)
 
+    def test_returning_none(self):
+        pysqldf = lambda q: sqldf(q, globals())
+        meat = load_meat()
+        result = sqldf("SELECT beef FROM meat LIMIT 10;", locals())
+        self.assertEqual(len(result), 10)
 
 if __name__=="__main__":
     unittest.main()

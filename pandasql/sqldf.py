@@ -112,7 +112,8 @@ def sqldf(q, env, inmemory=True):
 
     try:
         result = read_sql(q, conn, index_col=None)
-        del result['index']
+        if 'index' in result:
+            del result['index']
     except Exception, e:
         result = None
     finally:
