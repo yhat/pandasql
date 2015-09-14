@@ -11,27 +11,14 @@ def _ensure_data_frame(obj, name):
 
     take an object and make sure that it's a pandas data frame
     """
-    # we accept pandas Dataframe, and also dictionaries, lists, tuples
-    # we'll just convert them to Pandas Dataframe
-    if isinstance(obj, pd.DataFrame):
-        df = obj
-    elif isinstance(obj, (tuple, list)) :
-        #tuple and list case
-        if len(obj)==0:
-            return pd.Dataframe()
+    try:
+        df = pd.DataFrame(obj)
+        columns = [col if isinstance(col, str) else "c%d" % i
+                   for i, col in enumerate(df.columns)]
+        df.columns = columns
 
-        firstrow = obj[0]
-
-        if isinstance(firstrow, (tuple, list)):
-            #multiple-columns
-            colnames = ["c%d" % i for i in range(len(firstrow))]
-            df = pd.DataFrame(obj, columns=colnames)
-        else:
-            #mono-column
-            df = pd.DataFrame(obj, columns=["c0"])
-
-    if not isinstance(df, pd.DataFrame) :
-        raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % name)
+    except Exception:
+        raise Exception("%s is not a convertable data to Dataframe" % name)
 
     for col in df:
         if df[col].dtype==np.int64:
@@ -72,7 +59,7 @@ def sqldf(q, env, inmemory=True):
         variable environment; locals() or globals() in your function
         allows sqldf to access the variables in your python environment
     dbtype: bool
-        memory/disk; default is in memory; if not memory then it will be 
+        memory/disk; default is in memory; if not memory then it will be
         temporarily persisted to disk
 
     Returns
