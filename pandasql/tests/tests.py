@@ -43,7 +43,7 @@ class PandaSQLTest(unittest.TestCase):
             "letter_pos": [i for i in range(len(string.ascii_letters))],
             "letter": list(string.ascii_letters)
         })
-        
+
         result = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", locals())
         self.assertEqual(len(result), 20)
 
@@ -80,13 +80,13 @@ class PandaSQLTest(unittest.TestCase):
 
         result = sqldf("SELECT * FROM mylist", locals())
         self.assertEqual(len(result), 2)
-    
+
     def test_subquery(self):
         kermit = pd.DataFrame({"x": range(10)})
         q = "select * from (select * from kermit) tbl limit 2;"
         result = sqldf(q, locals())
         self.assertEqual(len(result), 2)
-    
+
     def test_in(self):
         courseData = {
             'courseCode': ['TM351','TU100','M269'],
@@ -104,7 +104,7 @@ class PandaSQLTest(unittest.TestCase):
             'programCode':['AB1','AB2','AB3','AB1','AB3','AB4','AB3','AB4','AB5']
              }
         program_df = pd.DataFrame(programData)
-        
+
         courseData = {
             'courseCode': ['TM351','TU100','M269'],
             'points':[30,60,30],
@@ -129,6 +129,31 @@ class PandaSQLTest(unittest.TestCase):
         meat = load_meat()
         result = sqldf("SELECT beef FROM meat LIMIT 10;", locals())
         self.assertEqual(len(result), 10)
+
+    def test_nested_list(self):
+        data = [[1,2,3], [4,5,6]]
+        q = 'select * from data'
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 2)
+        self.assertEqual(list(result.columns), ['c0', 'c1', 'c2'])
+        self.assertEqual(list(result.index), [0, 1])
+
+    def test_list_of_tuple(self):
+        data = [(1,2,3), (4,5,6)]
+        q = 'select * from data'
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 2)
+        self.assertEqual(list(result.columns), ['c0', 'c1', 'c2'])
+        self.assertEqual(list(result.index), [0, 1])
+
+    def test_list_of_dict(self):
+        data = [{"a":1, "b":2, "c":3}, {"a":4, "b":5, "c":6}]
+        q = 'select * from data'
+        result = sqldf(q, locals())
+        self.assertEqual(len(result), 2)
+        self.assertEqual(list(result.columns), ['a', 'b', 'c'])
+        self.assertEqual(list(result.index), [0, 1])
+
 
 if __name__=="__main__":
     unittest.main()
