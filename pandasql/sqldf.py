@@ -6,6 +6,10 @@ import re
 from warnings import catch_warnings, filterwarnings
 
 
+class PandaSQLException(Exception):
+    pass
+
+
 def _ensure_data_frame(obj, name):
     """
     obj a python object to be converted to a DataFrame
@@ -30,7 +34,7 @@ def _ensure_data_frame(obj, name):
             df = pd.DataFrame(obj, columns=["c0"])
 
     if not isinstance(df, pd.DataFrame):
-        raise Exception("%s is not of a supported data type" % name)
+        raise PandaSQLException("%s is not of a supported data type" % name)
 
     for col in df:
         if df[col].dtype == np.int64:
@@ -54,7 +58,7 @@ def _write_table(tablename, df, conn):
 
     for col in df.columns:
         if re.search("[()]", col):
-            raise Exception("Column name '%s' doesn't match SQL naming conventions" % col)
+            raise PandaSQLException("Column name '%s' doesn't match SQL naming conventions" % col)
 
     with catch_warnings():
         filterwarnings('ignore', message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
@@ -96,12 +100,12 @@ def sqldf(q, env, db_uri='sqlite:///:memory:'):
 
     engine = create_engine(db_uri)
     if engine.name not in ('sqlite', 'postgresql'):
-        raise ValueError('Currently only sqlite and postgresql are supported.')
+        raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
-            raise Exception("%s not found" % table)
+            raise PandaSQLException("%s not found" % table)
         df = env[table]
         df = _ensure_data_frame(df, table)
         _write_table(table, df, engine)
