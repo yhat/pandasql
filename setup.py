@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 
-required = []
+required = ['numpy', 'pandas', 'sqlalchemy']
 
 setup(
     name="pandasql",

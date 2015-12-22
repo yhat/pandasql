@@ -17,6 +17,14 @@ class PandaSQLTest(unittest.TestCase):
         result = sqldf("select * from df LIMIT 10;", locals())
         self.assertEqual(len(result), 10)
 
+    def test_select_pg(self):
+        df = pd.DataFrame({
+                 "letter_pos": [i for i in range(len(string.ascii_letters))],
+                 "l2": list(string.ascii_letters)
+        })
+        result = sqldf("select * from df LIMIT 10;", locals(), db_uri='postgresql://postgres@localhost/')
+        self.assertEqual(len(result), 10)
+
     def test_join(self):
 
         df = pd.DataFrame({

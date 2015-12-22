@@ -1,9 +1,8 @@
-import sqlite3 as sqlite
 import pandas as pd
 import numpy as np
 from pandas.io.sql import to_sql, read_sql
+from sqlalchemy import create_engine
 import re
-import os
 
 def _ensure_data_frame(obj, name):
     """
@@ -53,14 +52,14 @@ def _write_table(tablename, df, conn):
 
     for col in df.columns:
         if re.search("[()]", col):
-            msg = "please follow SQLite column naming conventions: "
-            msg += "http://www.sqlite.org/lang_keywords.html"
+            msg = "please follow SQL column naming conventions"
             raise Exception(msg)
 
-    to_sql(df, name=tablename, con=conn, flavor='sqlite')
+    to_sql(df, name=tablename, con=conn,
+           schema='pg_temp' if conn.name == 'postgresql' else None)
 
 
-def sqldf(q, env, inmemory=True):
+def sqldf(q, env, db_uri='sqlite:///:memory:'):
     """
     query pandas data frames using sql syntax
 
@@ -71,9 +70,8 @@ def sqldf(q, env, inmemory=True):
     env: locals() or globals()
         variable environment; locals() or globals() in your function
         allows sqldf to access the variables in your python environment
-    inmemory: bool
-        memory/disk; default is in memory; if not memory then it will be 
-        temporarily persisted to disk
+    db_uri: string
+        SQLAlchemy-compatible database URI
 
     Returns
     -------
@@ -93,32 +91,23 @@ def sqldf(q, env, inmemory=True):
     >>> sqldf("select avg(x) from df;", locals())
     """
 
-    if inmemory:
-        dbname = ":memory:"
-    else:
-        dbname = ".pandasql.db"
-    # conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES)
-    conn = sqlite.connect(dbname, detect_types=sqlite.PARSE_DECLTYPES|sqlite.PARSE_COLNAMES)
+    engine = create_engine(db_uri)
+    if engine.name not in ('sqlite', 'postgresql'):
+        raise ValueError('Currently only sqlite and postgresql are supported.')
+
     tables = _extract_table_names(q)
     for table in tables:
         if table not in env:
-            conn.close()
-            if not inmemory :
-                os.remove(dbname)
             raise Exception("%s not found" % table)
         df = env[table]
         df = _ensure_data_frame(df, table)
-        _write_table(table, df, conn)
+        _write_table(table, df, engine)
 
     try:
-        result = read_sql(q, conn, index_col=None)
+        result = read_sql(q, engine, index_col=None)
         if 'index' in result:
             del result['index']
     except Exception:
         result = None
-    finally:
-        conn.close()
-        if not inmemory:
-            os.remove(dbname)
     return result
 
