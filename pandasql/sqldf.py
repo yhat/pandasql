@@ -10,14 +10,12 @@ def _ensure_data_frame(obj, name):
     """
     obj a python object to be converted to a DataFrame
 
-    take an object and make sure that it's a pandas data frame
+    Take an object and make sure that it's a pandas data frame.
+    Accepts pandas Dataframe, dictionaries, lists, tuples.
     """
-    # we accept pandas Dataframe, and also dictionaries, lists, tuples
-    # we'll just convert them to Pandas Dataframe
     if isinstance(obj, pd.DataFrame):
         df = obj
     elif isinstance(obj, (tuple, list)):
-        # tuple and list case
         if len(obj) == 0:
             return pd.Dataframe()
 
@@ -32,7 +30,7 @@ def _ensure_data_frame(obj, name):
             df = pd.DataFrame(obj, columns=["c0"])
 
     if not isinstance(df, pd.DataFrame):
-        raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % name)
+        raise Exception("%s is not of a supported data type" % name)
 
     for col in df:
         if df[col].dtype == np.int64:
@@ -44,7 +42,7 @@ def _ensure_data_frame(obj, name):
 
 
 def _extract_table_names(q):
-    "extracts table names from a sql query"
+    """extracts table names from a sql query"""
     # a good old fashioned regex. turns out this worked better than actually parsing the code
     rgx = '(?:FROM|JOIN)\s+([A-Za-z0-9_]+)'
     tables = re.findall(rgx, q, re.IGNORECASE)
@@ -52,12 +50,11 @@ def _extract_table_names(q):
 
 
 def _write_table(tablename, df, conn):
-    "writes a dataframe to the sqlite database"
+    """writes a dataframe to the sqlite database"""
 
     for col in df.columns:
         if re.search("[()]", col):
-            msg = "please follow SQL column naming conventions"
-            raise Exception(msg)
+            raise Exception("Column name '%s' doesn't match SQL naming conventions" % col)
 
     with catch_warnings():
         filterwarnings('ignore', message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
