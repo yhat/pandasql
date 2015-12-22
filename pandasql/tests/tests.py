@@ -134,7 +134,18 @@ def test_datetime_query(db_uri):
     assert len(result) == 10
 
 
-def test_returning_none(db_uri):
+def test_returning_single(db_uri):
     meat = load_meat()
     result = sqldf("SELECT beef FROM meat LIMIT 10;", locals(), db_uri)
     assert len(result) == 10
+
+
+def test_name_index(db_uri):
+    df = pd.DataFrame({
+        "index": [i for i in range(len(string.ascii_letters))],
+        "level_0": [i for i in range(len(string.ascii_letters))],
+        "level_1": [i for i in range(len(string.ascii_letters))],
+        "letter": list(string.ascii_letters)
+    })
+    result = sqldf("SELECT * FROM df", locals(), db_uri)
+    pdtest.assert_frame_equal(df, result)

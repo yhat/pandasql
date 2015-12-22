@@ -63,7 +63,8 @@ def _write_table(tablename, df, conn):
     with catch_warnings():
         filterwarnings('ignore', message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
         to_sql(df, name=tablename, con=conn,
-               schema='pg_temp' if conn.name == 'postgresql' else None)
+               schema='pg_temp' if conn.name == 'postgresql' else None,
+               index=not any(name is None for name in df.index.names))
 
 
 def sqldf(q, env, db_uri='sqlite:///:memory:'):
@@ -110,10 +111,6 @@ def sqldf(q, env, db_uri='sqlite:///:memory:'):
         df = _ensure_data_frame(df, table)
         _write_table(table, df, engine)
 
-    try:
-        result = read_sql(q, engine, index_col=None)
-        if 'index' in result:
-            del result['index']
-    except Exception:
-        result = None
+    result = read_sql(q, engine)
+
     return result
