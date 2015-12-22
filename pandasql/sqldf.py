@@ -4,6 +4,7 @@ from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
 
+
 def _ensure_data_frame(obj, name):
     """
     obj a python object to be converted to a DataFrame
@@ -14,31 +15,32 @@ def _ensure_data_frame(obj, name):
     # we'll just convert them to Pandas Dataframe
     if isinstance(obj, pd.DataFrame):
         df = obj
-    elif isinstance(obj, (tuple, list)) :
-        #tuple and list case
-        if len(obj)==0:
+    elif isinstance(obj, (tuple, list)):
+        # tuple and list case
+        if len(obj) == 0:
             return pd.Dataframe()
 
         firstrow = obj[0]
 
         if isinstance(firstrow, (tuple, list)):
-            #multiple-columns
+            # multiple-columns
             colnames = ["c%d" % i for i in range(len(firstrow))]
             df = pd.DataFrame(obj, columns=colnames)
         else:
-            #mono-column
+            # mono-column
             df = pd.DataFrame(obj, columns=["c0"])
 
-    if not isinstance(df, pd.DataFrame) :
+    if not isinstance(df, pd.DataFrame):
         raise Exception("%s is not a Dataframe, tuple, list, nor dictionary" % name)
 
     for col in df:
-        if df[col].dtype==np.int64:
+        if df[col].dtype == np.int64:
             df[col] = df[col].astype(np.float)
         elif isinstance(df[col].get(0), pd.tslib.Timestamp):
             df[col] = df[col].apply(lambda x: str(x))
 
     return df
+
 
 def _extract_table_names(q):
     "extracts table names from a sql query"
@@ -46,6 +48,7 @@ def _extract_table_names(q):
     rgx = '(?:FROM|JOIN)\s+([A-Za-z0-9_]+)'
     tables = re.findall(rgx, q, re.IGNORECASE)
     return list(set(tables))
+
 
 def _write_table(tablename, df, conn):
     "writes a dataframe to the sqlite database"
@@ -110,4 +113,3 @@ def sqldf(q, env, db_uri='sqlite:///:memory:'):
     except Exception:
         result = None
     return result
-

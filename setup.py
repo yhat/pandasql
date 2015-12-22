@@ -1,9 +1,6 @@
 from distutils.core import setup
 from setuptools import find_packages
 
-
-required = ['numpy', 'pandas', 'sqlalchemy']
-
 setup(
     name="pandasql",
     version="0.6.3",
@@ -16,6 +13,5 @@ setup(
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
     long_description=open("README.rst").read(),
-    install_requires=required,
+    install_requires=['numpy', 'pandas', 'sqlalchemy'],
 )
-
