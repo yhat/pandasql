@@ -2,6 +2,7 @@ import pandas as pd
 from pandasql import sqldf, load_meat
 import string
 import pytest
+import pandas.util.testing as pdtest
 
 
 @pytest.fixture(params=['sqlite:///:memory:', 'postgresql://postgres@localhost/'])
@@ -15,7 +16,9 @@ def test_select(db_uri):
         "l2": list(string.ascii_letters)
     })
     result = sqldf("SELECT * FROM df LIMIT 10;", locals(), db_uri)
+
     assert len(result) == 10
+    pdtest.assert_frame_equal(result, df.head(10))
 
 
 def test_join(db_uri):
@@ -30,7 +33,9 @@ def test_join(db_uri):
     })
 
     result = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", locals(), db_uri)
+
     assert len(result) == 20
+    pdtest.assert_frame_equal(result[['letter_pos', 'l2']], df[['letter_pos', 'l2']].head(20))
 
 
 def test_query_with_spacing(db_uri):
@@ -44,12 +49,12 @@ def test_query_with_spacing(db_uri):
         "letter": list(string.ascii_letters)
     })
 
-    result = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", locals(), db_uri)
-    assert len(result) == 20
+    expected = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", locals(), db_uri)
 
     q = """
         SELECT
         a.*
+    , b.letter
     FROM
         df a
     INNER JOIN
@@ -59,6 +64,7 @@ def test_query_with_spacing(db_uri):
     ;"""
     result = sqldf(q, locals(), db_uri)
     assert len(result) == 20
+    pdtest.assert_frame_equal(result, expected)
 
 
 def test_query_single_list(db_uri):
