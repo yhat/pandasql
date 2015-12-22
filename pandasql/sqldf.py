@@ -3,6 +3,7 @@ import numpy as np
 from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
+from warnings import catch_warnings, filterwarnings
 
 
 def _ensure_data_frame(obj, name):
@@ -58,8 +59,10 @@ def _write_table(tablename, df, conn):
             msg = "please follow SQL column naming conventions"
             raise Exception(msg)
 
-    to_sql(df, name=tablename, con=conn,
-           schema='pg_temp' if conn.name == 'postgresql' else None)
+    with catch_warnings():
+        filterwarnings('ignore', message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
+        to_sql(df, name=tablename, con=conn,
+               schema='pg_temp' if conn.name == 'postgresql' else None)
 
 
 def sqldf(q, env, db_uri='sqlite:///:memory:'):
