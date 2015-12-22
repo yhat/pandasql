@@ -71,7 +71,7 @@ def sqldf(q, env, inmemory=True):
     env: locals() or globals()
         variable environment; locals() or globals() in your function
         allows sqldf to access the variables in your python environment
-    dbtype: bool
+    inmemory: bool
         memory/disk; default is in memory; if not memory then it will be 
         temporarily persisted to disk
 
