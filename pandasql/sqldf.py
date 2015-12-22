@@ -10,6 +10,26 @@ class PandaSQLException(Exception):
     pass
 
 
+class PandaSQL:
+    def __init__(self, db_uri):
+        self.engine = create_engine(db_uri)
+        if self.engine.name not in ('sqlite', 'postgresql'):
+            raise PandaSQLException('Currently only sqlite and postgresql are supported.')
+
+    def __call__(self, query, **env):
+        tables = _extract_table_names(query)
+        for table in tables:
+            if table not in env:
+                raise PandaSQLException("%s not found" % table)
+            df = env[table]
+            df = _ensure_data_frame(df, table)
+            _write_table(table, df, self.engine)
+
+        result = read_sql(query, self.engine)
+
+        return result
+
+
 def _ensure_data_frame(obj, name):
     """
     obj a python object to be converted to a DataFrame
@@ -36,6 +56,7 @@ def _ensure_data_frame(obj, name):
     if not isinstance(df, pd.DataFrame):
         raise PandaSQLException("%s is not of a supported data type" % name)
 
+    # XXX: what is this for? Tests pass without it.
     for col in df:
         if df[col].dtype == np.int64:
             df[col] = df[col].astype(np.float)
@@ -98,19 +119,4 @@ def sqldf(q, env, db_uri='sqlite:///:memory:'):
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
     """
-
-    engine = create_engine(db_uri)
-    if engine.name not in ('sqlite', 'postgresql'):
-        raise PandaSQLException('Currently only sqlite and postgresql are supported.')
-
-    tables = _extract_table_names(q)
-    for table in tables:
-        if table not in env:
-            raise PandaSQLException("%s not found" % table)
-        df = env[table]
-        df = _ensure_data_frame(df, table)
-        _write_table(table, df, engine)
-
-    result = read_sql(q, engine)
-
-    return result
+    return PandaSQL(db_uri)(q, **env)

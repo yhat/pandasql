@@ -1,5 +1,5 @@
 import pandas as pd
-from pandasql import sqldf, load_meat
+from pandasql import PandaSQL, sqldf, load_meat
 import string
 import pytest
 import pandas.util.testing as pdtest
@@ -10,12 +10,28 @@ def db_uri(request):
     return request.param
 
 
+@pytest.fixture()
+def pandasql(db_uri):
+    return PandaSQL(db_uri)
+
+
 def test_select(db_uri):
     df = pd.DataFrame({
         "letter_pos": [i for i in range(len(string.ascii_letters))],
         "l2": list(string.ascii_letters)
     })
     result = sqldf("SELECT * FROM df LIMIT 10;", locals(), db_uri)
+
+    assert len(result) == 10
+    pdtest.assert_frame_equal(result, df.head(10))
+
+
+def test_select_using_class(pandasql):
+    df = pd.DataFrame({
+        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "l2": list(string.ascii_letters)
+    })
+    result = pandasql("SELECT * FROM df LIMIT 10;", **locals())
 
     assert len(result) == 10
     pdtest.assert_frame_equal(result, df.head(10))
