@@ -4,6 +4,7 @@ from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
 from warnings import catch_warnings, filterwarnings
+from sqlalchemy.exc import OperationalError
 
 
 class PandaSQLException(Exception):
@@ -11,7 +12,7 @@ class PandaSQLException(Exception):
 
 
 class PandaSQL:
-    def __init__(self, db_uri):
+    def __init__(self, db_uri='sqlite:///:memory:'):
         self.engine = create_engine(db_uri)
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
@@ -20,12 +21,15 @@ class PandaSQL:
         tables = _extract_table_names(query)
         for table in tables:
             if table not in env:
-                raise PandaSQLException("%s not found" % table)
+                continue
             df = env[table]
             df = _ensure_data_frame(df, table)
             _write_table(table, df, self.engine)
 
-        result = read_sql(query, self.engine)
+        try:
+            result = read_sql(query, self.engine)
+        except OperationalError as ex:
+            raise PandaSQLException(ex)
 
         return result
 
@@ -86,7 +90,7 @@ def _write_table(tablename, df, conn):
                index=not any(name is None for name in df.index.names))
 
 
-def sqldf(q, env, db_uri='sqlite:///:memory:'):
+def sqldf(q, env={}, db_uri='sqlite:///:memory:'):
     """
     query pandas data frames using sql syntax
 

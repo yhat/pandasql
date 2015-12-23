@@ -1,5 +1,5 @@
 import pandas as pd
-from pandasql import PandaSQL, sqldf, load_meat
+from pandasql import PandaSQL, PandaSQLException, sqldf, load_meat
 import string
 import pytest
 import pandas.util.testing as pdtest
@@ -16,6 +16,7 @@ def db_uris():
 @pytest.fixture(params=['sqlite', 'postgres'])
 def db_flavor(request):
     return request.param
+
 
 @pytest.fixture()
 def db_uri(db_uris, db_flavor):
@@ -182,3 +183,17 @@ def test_name_index(db_uri):
     })
     result = sqldf("SELECT * FROM df", locals(), db_uri)
     pdtest.assert_frame_equal(df, result)
+
+
+def test_nonexistent_table(db_uri):
+    with pytest.raises(PandaSQLException):
+        sqldf("SELECT * FROM nosuchtablereally")
+
+
+def test_system_tables(db_uri, db_flavor):
+    if db_flavor == 'sqlite':
+        # sqlite doesn't have information_schema
+        result = sqldf("SELECT * FROM sqlite_master", locals(), db_uri)
+    else:
+        result = sqldf("SELECT * FROM information_schema.tables", locals(), db_uri)
+    assert len(result.columns) > 1
