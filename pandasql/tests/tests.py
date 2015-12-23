@@ -33,10 +33,10 @@ def test_select(db_uri):
         "letter_pos": [i for i in range(len(string.ascii_letters))],
         "l2": list(string.ascii_letters)
     })
-    result = sqldf("SELECT * FROM df LIMIT 10;", db_uri=db_uri)
+    result = sqldf("SELECT * FROM df LIMIT 10", db_uri=db_uri)
 
     assert len(result) == 10
-    pdtest.assert_frame_equal(result, df.head(10))
+    pdtest.assert_frame_equal(df.head(10), result)
 
 
 def test_select_using_class(pandasql):
@@ -44,10 +44,10 @@ def test_select_using_class(pandasql):
         "letter_pos": [i for i in range(len(string.ascii_letters))],
         "l2": list(string.ascii_letters)
     })
-    result = pandasql("SELECT * FROM df LIMIT 10;")
+    result = pandasql("SELECT * FROM df LIMIT 10")
 
     assert len(result) == 10
-    pdtest.assert_frame_equal(result, df.head(10))
+    pdtest.assert_frame_equal(df.head(10), result)
 
 
 def test_join(db_uri):
@@ -61,10 +61,11 @@ def test_join(db_uri):
         "letter": list(string.ascii_letters)
     })
 
-    result = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", db_uri=db_uri)
+    result = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20", db_uri=db_uri)
 
     assert len(result) == 20
-    pdtest.assert_frame_equal(result[['letter_pos', 'l2']], df[['letter_pos', 'l2']].head(20))
+    pdtest.assert_frame_equal(df[['letter_pos', 'l2']].head(20), result[['letter_pos', 'l2']])
+    pdtest.assert_frame_equal(df2[['letter']].head(20), result[['letter']])
 
 
 def test_query_with_spacing(db_uri):
@@ -78,7 +79,7 @@ def test_query_with_spacing(db_uri):
         "letter": list(string.ascii_letters)
     })
 
-    expected = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20;", db_uri=db_uri)
+    expected = sqldf("SELECT a.*, b.letter FROM df a INNER JOIN df2 b ON a.l2 = b.letter LIMIT 20", db_uri=db_uri)
 
     q = """
         SELECT
@@ -90,16 +91,16 @@ def test_query_with_spacing(db_uri):
         df2 b
     on a.l2 = b.letter
     LIMIT 20
-    ;"""
+    """
     result = sqldf(q, db_uri=db_uri)
     assert len(result) == 20
-    pdtest.assert_frame_equal(result, expected)
+    pdtest.assert_frame_equal(expected, result)
 
 
 def test_subquery(db_uri):
     kermit = pd.DataFrame({"x": range(10)})
-    q = "SELECT * FROM (SELECT * FROM kermit) tbl LIMIT 2;"
-    result = sqldf(q, db_uri=db_uri)
+    result = sqldf("SELECT * FROM (SELECT * FROM kermit) tbl LIMIT 2", db_uri=db_uri)
+    pdtest.assert_frame_equal(kermit.head(2), result)
     assert len(result) == 2
 
 
@@ -110,8 +111,7 @@ def test_in(db_uri):
         'level': ['3', '1', '2']
     }
     course_df = pd.DataFrame(course_data)
-    q = "SELECT * FROM course_df WHERE coursecode IN ( 'TM351', 'TU100' );"
-    result = sqldf(q, db_uri=db_uri)
+    result = sqldf("SELECT * FROM course_df WHERE coursecode IN ( 'TM351', 'TU100' )", db_uri=db_uri)
     assert len(result) == 2
 
 
@@ -129,10 +129,7 @@ def test_in_with_subquery(db_uri):
     }
     course_df = pd.DataFrame(courseData)
 
-    q = '''
-        SELECT * FROM course_df WHERE coursecode IN ( SELECT DISTINCT coursecode FROM program_df ) ;
-      '''
-    result = sqldf(q, db_uri=db_uri)
+    result = sqldf("SELECT * FROM course_df WHERE coursecode IN ( SELECT DISTINCT coursecode FROM program_df )", db_uri=db_uri)
     assert len(result) == 3
 
 
@@ -142,16 +139,16 @@ def test_datetime_query(db_uri, db_flavor):
     result = sqldf("SELECT * FROM meat WHERE date >= '2012-01-01'", db_uri=db_uri)
     if db_flavor == 'sqlite':
         # sqlite uses strings instead of datetimes
-        pdtest.assert_frame_equal(result.drop('date', 1), expected.drop('date', 1))
+        pdtest.assert_frame_equal(expected.drop('date', 1), result.drop('date', 1))
     else:
-        pdtest.assert_frame_equal(result, expected)
+        pdtest.assert_frame_equal(expected, result)
 
 
 def test_returning_single(db_uri):
     meat = load_meat()
-    result = sqldf("SELECT beef FROM meat LIMIT 10;", db_uri=db_uri)
+    result = sqldf("SELECT beef FROM meat LIMIT 10", db_uri=db_uri)
     assert len(result) == 10
-    pdtest.assert_frame_equal(result, meat[['beef']].head(10))
+    pdtest.assert_frame_equal(meat[['beef']].head(10), result)
 
 
 def test_name_index(db_uri):

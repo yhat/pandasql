@@ -9,6 +9,9 @@ from sqlalchemy.exc import DatabaseError
 from sqlalchemy.pool import NullPool
 
 
+__all__ = ['PandaSQL', 'PandaSQLException', 'sqldf']
+
+
 class PandaSQLException(Exception):
     pass
 
