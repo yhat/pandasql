@@ -1,3 +1,4 @@
+import inspect
 import pandas as pd
 import numpy as np
 from pandas.io.sql import to_sql, read_sql
@@ -18,6 +19,13 @@ class PandaSQL:
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
     def __call__(self, query, env={}):
+        if not env:
+            cur_filename = inspect.getframeinfo(inspect.currentframe()).filename
+            outer_frame = next(f
+                               for f in inspect.getouterframes(inspect.currentframe())
+                               if f.filename != cur_filename)
+            env = outer_frame.frame.f_locals
+
         tables = _extract_table_names(query)
         for table in tables:
             if table not in env:
