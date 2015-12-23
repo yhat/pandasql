@@ -1,3 +1,17 @@
+0.7.0 (fork)
+============
+- use SQLAlchemy and support Postgres (other engines can easily be added)
+- specifying variable environment is optional, by default it assumes `locals()` and `globals()` together
+- new class-based interface: allows not to specify database each time
+- cleaner interface: docstring, custom exception, refactoring
+- fix datetime handling
+- don't drop column named 'index'
+- drop implicit automatic conversion to dataframes: it is easy for user to call `pd.DataFrame` constructor, so what for the magic?
+- testing uses pytest and tests for all supported backends
+- add asserts for actual content in tests, not length only
+- demo fixed to work with modern pandas and python versions
+- add dependencies to `setup.py`
+
 0.6.0
 =====
 - removing sqlparse dependency, now using regex
