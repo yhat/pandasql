@@ -30,7 +30,7 @@ def pdsql(db_uri):
 
 def test_select_legacy(db_uri):
     df = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "l2": list(string.ascii_letters)
     })
     result = sqldf("SELECT * FROM df LIMIT 10", db_uri=db_uri)
@@ -41,7 +41,7 @@ def test_select_legacy(db_uri):
 
 def test_select(pdsql):
     df = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "l2": list(string.ascii_letters)
     })
     result = pdsql("SELECT * FROM df LIMIT 10")
@@ -52,12 +52,12 @@ def test_select(pdsql):
 
 def test_join(pdsql):
     df = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "l2": list(string.ascii_letters)
     })
 
     df2 = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "letter": list(string.ascii_letters)
     })
 
@@ -70,12 +70,12 @@ def test_join(pdsql):
 
 def test_query_with_spacing(pdsql):
     df = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "l2": list(string.ascii_letters)
     })
 
     df2 = pd.DataFrame({
-        "letter_pos": [i for i in range(len(string.ascii_letters))],
+        "letter_pos": range(len(string.ascii_letters)),
         "letter": list(string.ascii_letters)
     })
 
@@ -153,9 +153,9 @@ def test_returning_single(pdsql):
 
 def test_name_index(pdsql):
     df = pd.DataFrame({
-        "index": [i for i in range(len(string.ascii_letters))],
-        "level_0": [i for i in range(len(string.ascii_letters))],
-        "level_1": [i for i in range(len(string.ascii_letters))],
+        "index": range(len(string.ascii_letters)),
+        "level_0": range(len(string.ascii_letters)),
+        "level_1": range(len(string.ascii_letters)),
         "letter": list(string.ascii_letters)
     })
     result = pdsql("SELECT * FROM df")
