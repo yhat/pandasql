@@ -177,3 +177,33 @@ def test_system_tables(db_uri, db_flavor):
     else:
         result = sqldf("SELECT * FROM information_schema.tables", db_uri=db_uri)
     assert len(result.columns) > 1
+
+
+@pytest.mark.parametrize('db_flavor', ['postgres'])  # sqlite doesn't support tables with no columns
+def test_no_columns(db_uri):
+    df = pd.DataFrame()
+    result = sqldf("SELECT * FROM df", db_uri=db_uri)
+    pdtest.assert_frame_equal(df, result)
+
+
+def test_empty(db_uri):
+    df = pd.DataFrame({'x': []})
+    result = sqldf("SELECT * FROM df", db_uri=db_uri)
+    assert result.empty
+    pdtest.assert_index_equal(df.columns, result.columns)
+
+
+def test_noleak(db_uri):
+    df = pd.DataFrame({'x': [1]})
+    result = sqldf("SELECT * FROM df", db_uri=db_uri)
+    pdtest.assert_frame_equal(df, result)
+    with pytest.raises(PandaSQLException):
+        result = sqldf("SELECT * FROM df", {}, db_uri=db_uri)
+
+
+def test_noleak_class(pandasql):
+    df = pd.DataFrame({'x': [1]})
+    result = pandasql("SELECT * FROM df")
+    pdtest.assert_frame_equal(df, result)
+    with pytest.raises(PandaSQLException):
+        result = pandasql("SELECT * FROM df", {})

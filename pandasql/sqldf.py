@@ -5,7 +5,8 @@ from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
 from warnings import catch_warnings, filterwarnings
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import DatabaseError
+from sqlalchemy.pool import NullPool
 
 
 class PandaSQLException(Exception):
@@ -19,7 +20,7 @@ class PandaSQL:
 
         :param db_uri: SQLAlchemy-compatible database URI.
         """
-        self.engine = create_engine(db_uri)
+        self.engine = create_engine(db_uri, poolclass=NullPool)
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
@@ -36,15 +37,16 @@ class PandaSQL:
         if env is None:
             env = get_outer_frame_variables()
 
-        for table_name in extract_table_names(query):
-            if table_name not in env:
-                continue
-            write_table(table_name, env[table_name], self.engine)
+        with self.engine.connect() as conn:
+            for table_name in extract_table_names(query):
+                if table_name not in env:
+                    continue
+                write_table(env[table_name], table_name, conn)
 
-        try:
-            result = read_sql(query, self.engine)
-        except OperationalError as ex:
-            raise PandaSQLException(ex)
+            try:
+                result = read_sql(query, conn)
+            except DatabaseError as ex:
+                raise PandaSQLException(ex)
 
         return result
 
@@ -59,25 +61,20 @@ def get_outer_frame_variables():
             **outer_frame.frame.f_locals}
 
 
-def extract_table_names(q):
+def extract_table_names(query):
     """ Extract table names from an SQL query. """
     # a good old fashioned regex. turns out this worked better than actually parsing the code
-    tables = re.findall(r'(?:FROM|JOIN)\s+(\w+)', q, re.IGNORECASE)
+    tables = re.findall(r'(?:FROM|JOIN)\s+(\w+)', query, re.IGNORECASE)
     return set(tables)
 
 
-def write_table(tablename, df, conn):
+def write_table(df, tablename, conn):
     """ Write a dataframe to the database. """
-
-    for col in df.columns:
-        if re.search("[()]", col):
-            raise PandaSQLException("Column name '%s' doesn't match SQL naming conventions" % col)
-
     with catch_warnings():
         filterwarnings('ignore',
                        message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
         to_sql(df, name=tablename, con=conn,
-               schema='pg_temp' if conn.name == 'postgresql' else None,
+               schema='pg_temp' if conn.engine.name == 'postgresql' else None,
                index=not any(name is None for name in df.index.names))
 
 
