@@ -5,9 +5,21 @@ import pytest
 import pandas.util.testing as pdtest
 
 
-@pytest.fixture(params=['sqlite:///:memory:', 'postgresql://postgres@localhost/'])
-def db_uri(request):
+@pytest.fixture()
+def db_uris():
+    return {
+        'sqlite': 'sqlite:///:memory:',
+        'postgres': 'postgresql://postgres@localhost/'
+    }
+
+
+@pytest.fixture(params=['sqlite', 'postgres'])
+def db_flavor(request):
     return request.param
+
+@pytest.fixture()
+def db_uri(db_uris, db_flavor):
+    return db_uris[db_flavor]
 
 
 @pytest.fixture()
@@ -144,10 +156,15 @@ def test_in_with_subquery(db_uri):
     assert len(result) == 3
 
 
-def test_datetime_query(db_uri):
+def test_datetime_query(db_uri, db_flavor):
     meat = load_meat()
-    result = sqldf("SELECT * FROM meat LIMIT 10;", locals(), db_uri)
-    assert len(result) == 10
+    expected = meat[meat['date'] >= '2012-01-01'].reset_index(drop=True)
+    result = sqldf("SELECT * FROM meat WHERE date >= '2012-01-01'", locals(), db_uri)
+    if db_flavor == 'sqlite':
+        # sqlite uses strings instead of datetimes
+        pdtest.assert_frame_equal(result.drop('date', 1), expected.drop('date', 1))
+    else:
+        pdtest.assert_frame_equal(result, expected)
 
 
 def test_returning_single(db_uri):

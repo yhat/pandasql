@@ -60,8 +60,6 @@ def _ensure_data_frame(obj, name):
     for col in df:
         if df[col].dtype == np.int64:
             df[col] = df[col].astype(np.float)
-        elif isinstance(df[col].get(0), pd.tslib.Timestamp):
-            df[col] = df[col].apply(lambda x: str(x))
 
     return df
 
