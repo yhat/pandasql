@@ -17,7 +17,7 @@ class PandaSQL:
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
-    def __call__(self, query, **env):
+    def __call__(self, query, env={}):
         tables = _extract_table_names(query)
         for table in tables:
             if table not in env:
@@ -121,4 +121,4 @@ def sqldf(q, env={}, db_uri='sqlite:///:memory:'):
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
     """
-    return PandaSQL(db_uri)(q, **env)
+    return PandaSQL(db_uri)(q, env)

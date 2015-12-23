@@ -44,7 +44,7 @@ def test_select_using_class(pandasql):
         "letter_pos": [i for i in range(len(string.ascii_letters))],
         "l2": list(string.ascii_letters)
     })
-    result = pandasql("SELECT * FROM df LIMIT 10;", **locals())
+    result = pandasql("SELECT * FROM df LIMIT 10;", locals())
 
     assert len(result) == 10
     pdtest.assert_frame_equal(result, df.head(10))
