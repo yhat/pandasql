@@ -14,25 +14,32 @@ class PandaSQLException(Exception):
 
 class PandaSQL:
     def __init__(self, db_uri='sqlite:///:memory:'):
+        """
+        Initialize with a specific database.
+
+        :param db_uri: SQLAlchemy-compatible database URI.
+        """
         self.engine = create_engine(db_uri)
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
-    def __call__(self, query, env={}):
-        if not env:
-            cur_filename = inspect.getframeinfo(inspect.currentframe()).filename
-            outer_frame = next(f
-                               for f in inspect.getouterframes(inspect.currentframe())
-                               if f.filename != cur_filename)
-            env = outer_frame.frame.f_locals
+    def __call__(self, query, env=None):
+        """
+        Execute the SQL query.
+        Automatically creates tables mentioned in the query from dataframes before executing.
 
-        tables = _extract_table_names(query)
-        for table in tables:
-            if table not in env:
+        :param query: SQL query string, which can reference pandas dataframes as SQL tables.
+        :param env: Variables environment - a dict mapping table names to pandas dataframes.
+        If not specified use local and global variables of the caller.
+        :return: Pandas dataframe with the result of the SQL query.
+        """
+        if env is None:
+            env = get_outer_frame_variables()
+
+        for table_name in extract_table_names(query):
+            if table_name not in env:
                 continue
-            df = env[table]
-            df = _ensure_data_frame(df, table)
-            _write_table(table, df, self.engine)
+            write_table(table_name, env[table_name], self.engine)
 
         try:
             result = read_sql(query, self.engine)
@@ -42,69 +49,46 @@ class PandaSQL:
         return result
 
 
-def _ensure_data_frame(obj, name):
-    """
-    obj a python object to be converted to a DataFrame
-
-    Take an object and make sure that it's a pandas data frame.
-    Accepts pandas Dataframe, dictionaries, lists, tuples.
-    """
-    if isinstance(obj, pd.DataFrame):
-        df = obj
-    elif isinstance(obj, (tuple, list)):
-        if len(obj) == 0:
-            return pd.Dataframe()
-
-        firstrow = obj[0]
-
-        if isinstance(firstrow, (tuple, list)):
-            # multiple-columns
-            colnames = ["c%d" % i for i in range(len(firstrow))]
-            df = pd.DataFrame(obj, columns=colnames)
-        else:
-            # mono-column
-            df = pd.DataFrame(obj, columns=["c0"])
-
-    if not isinstance(df, pd.DataFrame):
-        raise PandaSQLException("%s is not of a supported data type" % name)
-
-    # XXX: what is this for? Tests pass without it.
-    for col in df:
-        if df[col].dtype == np.int64:
-            df[col] = df[col].astype(np.float)
-
-    return df
+def get_outer_frame_variables():
+    """ Get a dict of local and global variables of the first outer frame from another file. """
+    cur_filename = inspect.getframeinfo(inspect.currentframe()).filename
+    outer_frame = next(f
+                       for f in inspect.getouterframes(inspect.currentframe())
+                       if f.filename != cur_filename)
+    return {**outer_frame.frame.f_globals,
+            **outer_frame.frame.f_locals}
 
 
-def _extract_table_names(q):
-    """extracts table names from a sql query"""
+def extract_table_names(q):
+    """ Extract table names from an SQL query. """
     # a good old fashioned regex. turns out this worked better than actually parsing the code
-    rgx = '(?:FROM|JOIN)\s+([A-Za-z0-9_]+)'
-    tables = re.findall(rgx, q, re.IGNORECASE)
-    return list(set(tables))
+    tables = re.findall(r'(?:FROM|JOIN)\s+(\w+)', q, re.IGNORECASE)
+    return set(tables)
 
 
-def _write_table(tablename, df, conn):
-    """writes a dataframe to the sqlite database"""
+def write_table(tablename, df, conn):
+    """ Write a dataframe to the database. """
 
     for col in df.columns:
         if re.search("[()]", col):
             raise PandaSQLException("Column name '%s' doesn't match SQL naming conventions" % col)
 
     with catch_warnings():
-        filterwarnings('ignore', message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
+        filterwarnings('ignore',
+                       message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
         to_sql(df, name=tablename, con=conn,
                schema='pg_temp' if conn.name == 'postgresql' else None,
                index=not any(name is None for name in df.index.names))
 
 
-def sqldf(q, env={}, db_uri='sqlite:///:memory:'):
+def sqldf(query, env=None, db_uri='sqlite:///:memory:'):
     """
-    query pandas data frames using sql syntax
+    Query pandas data frames using sql syntax
+    This function is meant for backward compatibility only. New users are encouraged to use the PandaSQL class.
 
     Parameters
     ----------
-    q: string
+    query: string
         a sql query using DataFrames as tables
     env: locals() or globals()
         variable environment; locals() or globals() in your function
@@ -129,4 +113,4 @@ def sqldf(q, env={}, db_uri='sqlite:///:memory:'):
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
     """
-    return PandaSQL(db_uri)(q, env)
+    return PandaSQL(db_uri)(query, env)

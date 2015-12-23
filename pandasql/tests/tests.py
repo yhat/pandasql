@@ -96,27 +96,6 @@ def test_query_with_spacing(db_uri):
     pdtest.assert_frame_equal(result, expected)
 
 
-def test_query_single_list(db_uri):
-    mylist = [i for i in range(10)]
-
-    result = sqldf("SELECT * FROM mylist", db_uri=db_uri)
-    assert len(result) == 10
-
-
-def test_query_list_of_lists(db_uri):
-    mylist = [[i for i in range(10)], [i for i in range(10)]]
-
-    result = sqldf("SELECT * FROM mylist", db_uri=db_uri)
-    assert len(result) == 2
-
-
-def test_query_list_of_tuples(db_uri):
-    mylist = [tuple([i for i in range(10)]), tuple([i for i in range(10)])]
-
-    result = sqldf("SELECT * FROM mylist", db_uri=db_uri)
-    assert len(result) == 2
-
-
 def test_subquery(db_uri):
     kermit = pd.DataFrame({"x": range(10)})
     q = "SELECT * FROM (SELECT * FROM kermit) tbl LIMIT 2;"
