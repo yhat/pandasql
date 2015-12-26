@@ -67,7 +67,10 @@ def get_outer_frame_variables():
 def extract_table_names(query):
     """ Extract table names from an SQL query. """
     # a good old fashioned regex. turns out this worked better than actually parsing the code
-    tables = re.findall(r'(?:FROM|JOIN)\s+(\w+)', query, re.IGNORECASE)
+    tables_blocks = re.findall(r'(?:FROM|JOIN)\s+(\w+(?:\s*,\s*\w+)*)', query, re.IGNORECASE)
+    tables = [tbl
+              for block in tables_blocks
+              for tbl in re.findall(r'\w+', block)]
     return set(tables)
 
 
