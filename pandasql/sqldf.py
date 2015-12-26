@@ -115,7 +115,7 @@ def write_table(df, tablename, conn):
         filterwarnings('ignore',
                        message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
         to_sql(df, name=tablename, con=conn,
-               index=not any(name is None for name in df.index.names))
+               index=not any(name is None for name in df.index.names))  # load index into db if all levels are named
 
 
 def sqldf(query, env=None, db_uri='sqlite:///:memory:'):

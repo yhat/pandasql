@@ -241,14 +241,14 @@ def test_noreturn_query(pdsql):
 
 
 @pytest.mark.parametrize('pdsql', [False], indirect=True)
-def test_sideeffect(pdsql):
+def test_no_sideeffect_leak(pdsql):
     pdsql("CREATE TABLE tbl (col INTEGER)")
     with pytest.raises(PandaSQLException):
         result = pdsql("SELECT * FROM tbl")
 
 
 @pytest.mark.parametrize('pdsql', [True], indirect=True)
-def test_sideeffect(pdsql):
+def test_sideeffect_persist(pdsql):
     pdsql("CREATE TABLE tbl (col INTEGER)")
     result = pdsql("SELECT * FROM tbl")
     assert list(result.columns) == ['col']
