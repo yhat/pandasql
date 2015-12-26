@@ -1,4 +1,5 @@
 import inspect
+from contextlib import contextmanager
 from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
@@ -27,10 +28,10 @@ class PandaSQL:
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
         self.persist = persist
+        self.loaded_tables = set()
         if self.persist:
-            self.loaded_tables = set()
-            self.conn = self.engine.connect()
-            self._init_connection(self.conn)
+            self._conn = self.engine.connect()
+            self._init_connection(self._conn)
 
     def __call__(self, query, env=None):
         """
@@ -45,39 +46,43 @@ class PandaSQL:
         if env is None:
             env = get_outer_frame_variables()
 
-        if self.persist:
+        with self.conn as conn:
             for table_name in extract_table_names(query):
                 if table_name not in env:
+                    # don't raise error because the table may be already in the database
                     continue
-                if table_name in self.loaded_tables:
+                if self.persist and table_name in self.loaded_tables:
+                    # table was loaded before using the same instance, don't do it again
                     continue
                 self.loaded_tables.add(table_name)
-                write_table(env[table_name], table_name, self.conn)
+                write_table(env[table_name], table_name, conn)
 
             try:
-                result = read_sql(query, self.conn)
+                result = read_sql(query, conn)
             except DatabaseError as ex:
                 raise PandaSQLException(ex)
             except ResourceClosedError:
                 # query returns nothing
                 result = None
-        else:
-            with self.engine.connect() as conn:
-                self._init_connection(conn)
-                for table_name in extract_table_names(query):
-                    if table_name not in env:
-                        continue
-                    write_table(env[table_name], table_name, conn)
-
-                try:
-                    result = read_sql(query, conn)
-                except DatabaseError as ex:
-                    raise PandaSQLException(ex)
-                except ResourceClosedError:
-                    # query returns nothing
-                    result = None
 
         return result
+
+    @property
+    @contextmanager
+    def conn(self):
+        if self.persist:
+            # the connection is created in __init__, so just return it
+            yield self._conn
+            # no cleanup needed
+        else:
+            # create the connection
+            conn = self.engine.connect()
+            self._init_connection(conn)
+            try:
+                yield conn
+            finally:
+                # cleanup - close connection on exit
+                conn.close()
 
     def _init_connection(self, conn):
         if self.engine.name == 'postgresql':
