@@ -115,7 +115,6 @@ def write_table(df, tablename, conn):
         filterwarnings('ignore',
                        message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
         to_sql(df, name=tablename, con=conn,
-               schema='pg_temp' if conn.engine.name == 'postgresql' else None,
                index=not any(name is None for name in df.index.names))
 
 
