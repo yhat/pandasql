@@ -231,6 +231,24 @@ def test_persistent(pdsql):
     result3 = pdsql("SELECT * FROM df")
     pdtest.assert_frame_equal(result1, result3)
 
-    df1 = pd.DataFrame({'x': [1, 2, 3]})  # will not have any effect
+    df1 = pd.DataFrame({'x': [1, 2, 3]})
     result4 = pdsql("SELECT * FROM df1")
     pdtest.assert_frame_equal(df1, result4)
+
+
+def test_noreturn_query(pdsql):
+    assert pdsql("CREATE TABLE tbl (col INTEGER)") is None
+
+
+@pytest.mark.parametrize('pdsql', [False], indirect=True)
+def test_sideeffect(pdsql):
+    pdsql("CREATE TABLE tbl (col INTEGER)")
+    with pytest.raises(PandaSQLException):
+        result = pdsql("SELECT * FROM tbl")
+
+
+@pytest.mark.parametrize('pdsql', [True], indirect=True)
+def test_sideeffect(pdsql):
+    pdsql("CREATE TABLE tbl (col INTEGER)")
+    result = pdsql("SELECT * FROM tbl")
+    assert list(result.columns) == ['col']

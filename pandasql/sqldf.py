@@ -1,11 +1,9 @@
 import inspect
-import pandas as pd
-import numpy as np
 from pandas.io.sql import to_sql, read_sql
 from sqlalchemy import create_engine
 import re
 from warnings import catch_warnings, filterwarnings
-from sqlalchemy.exc import DatabaseError
+from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
 
 
@@ -32,6 +30,7 @@ class PandaSQL:
         if self.persist:
             self.loaded_tables = set()
             self.conn = self.engine.connect()
+            self._init_connection(self.conn)
 
     def __call__(self, query, env=None):
         """
@@ -59,8 +58,12 @@ class PandaSQL:
                 result = read_sql(query, self.conn)
             except DatabaseError as ex:
                 raise PandaSQLException(ex)
+            except ResourceClosedError:
+                # query returns nothing
+                result = None
         else:
             with self.engine.connect() as conn:
+                self._init_connection(conn)
                 for table_name in extract_table_names(query):
                     if table_name not in env:
                         continue
@@ -70,8 +73,15 @@ class PandaSQL:
                     result = read_sql(query, conn)
                 except DatabaseError as ex:
                     raise PandaSQLException(ex)
+                except ResourceClosedError:
+                    # query returns nothing
+                    result = None
 
         return result
+
+    def _init_connection(self, conn):
+        if self.engine.name == 'postgresql':
+            conn.execute('set search_path to pg_temp')
 
 
 def get_outer_frame_variables():
