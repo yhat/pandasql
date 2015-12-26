@@ -17,15 +17,21 @@ class PandaSQLException(Exception):
 
 
 class PandaSQL:
-    def __init__(self, db_uri='sqlite:///:memory:'):
+    def __init__(self, db_uri='sqlite:///:memory:', persist=False):
         """
         Initialize with a specific database.
 
         :param db_uri: SQLAlchemy-compatible database URI.
+        :param persist: keep tables in database between different calls on the same object of this class.
         """
         self.engine = create_engine(db_uri, poolclass=NullPool)
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
+
+        self.persist = persist
+        if self.persist:
+            self.loaded_tables = set()
+            self.conn = self.engine.connect()
 
     def __call__(self, query, env=None):
         """
@@ -40,16 +46,30 @@ class PandaSQL:
         if env is None:
             env = get_outer_frame_variables()
 
-        with self.engine.connect() as conn:
+        if self.persist:
             for table_name in extract_table_names(query):
                 if table_name not in env:
                     continue
-                write_table(env[table_name], table_name, conn)
+                if table_name in self.loaded_tables:
+                    continue
+                self.loaded_tables.add(table_name)
+                write_table(env[table_name], table_name, self.conn)
 
             try:
-                result = read_sql(query, conn)
+                result = read_sql(query, self.conn)
             except DatabaseError as ex:
                 raise PandaSQLException(ex)
+        else:
+            with self.engine.connect() as conn:
+                for table_name in extract_table_names(query):
+                    if table_name not in env:
+                        continue
+                    write_table(env[table_name], table_name, conn)
+
+                try:
+                    result = read_sql(query, conn)
+                except DatabaseError as ex:
+                    raise PandaSQLException(ex)
 
         return result
 

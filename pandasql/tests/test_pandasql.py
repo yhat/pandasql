@@ -23,9 +23,9 @@ def db_uri(db_uris, db_flavor):
     return db_uris[db_flavor]
 
 
-@pytest.fixture()
-def pdsql(db_uri):
-    return PandaSQL(db_uri)
+@pytest.fixture(params=[False, True])
+def pdsql(db_uri, request):
+    return PandaSQL(db_uri, persist=request.param)
 
 
 def test_select_legacy(db_uri):
@@ -194,13 +194,43 @@ def test_noleak_legacy(db_uri):
     df = pd.DataFrame({'x': [1]})
     result = sqldf("SELECT * FROM df", db_uri=db_uri)
     pdtest.assert_frame_equal(df, result)
+    del df
     with pytest.raises(PandaSQLException):
-        result = sqldf("SELECT * FROM df", {}, db_uri=db_uri)
+        result = sqldf("SELECT * FROM df", db_uri=db_uri)
 
 
+@pytest.mark.parametrize('pdsql', [False], indirect=True)
 def test_noleak_class(pdsql):
     df = pd.DataFrame({'x': [1]})
     result = pdsql("SELECT * FROM df")
     pdtest.assert_frame_equal(df, result)
+    del df
     with pytest.raises(PandaSQLException):
-        result = pdsql("SELECT * FROM df", {})
+        result = pdsql("SELECT * FROM df")
+
+
+def test_same_query_noerr(pdsql):
+    df = pd.DataFrame({'x': [1]})
+    result1 = pdsql("SELECT * FROM df")
+    pdtest.assert_frame_equal(df, result1)
+    result2 = pdsql("SELECT * FROM df")
+    pdtest.assert_frame_equal(result1, result2)
+
+
+@pytest.mark.parametrize('pdsql', [True], indirect=True)
+def test_persistent(pdsql):
+    df = pd.DataFrame({'x': [1]})
+    result1 = pdsql("SELECT * FROM df")
+    pdtest.assert_frame_equal(df, result1)
+
+    del df
+    result2 = pdsql("SELECT * FROM df")
+    pdtest.assert_frame_equal(result1, result2)
+
+    df = pd.DataFrame({'x': [1, 2]})  # will not have any effect
+    result3 = pdsql("SELECT * FROM df")
+    pdtest.assert_frame_equal(result1, result3)
+
+    df1 = pd.DataFrame({'x': [1, 2, 3]})  # will not have any effect
+    result4 = pdsql("SELECT * FROM df1")
+    pdtest.assert_frame_equal(df1, result4)
