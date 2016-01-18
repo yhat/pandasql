@@ -1,48 +1,58 @@
 pandasql
 ========
 
+This is a fork of the original pandasql, with support of multiple SQL
+backends and more convenient interface. See below for more info.
+
 ``pandasql`` allows you to query ``pandas`` DataFrames using SQL syntax.
 It works similarly to ``sqldf`` in R. ``pandasql`` seeks to provide a
 more familiar way of manipulating and cleaning data for people new to
 Python or ``pandas``.
 
 Installation
-^^^^^^^^^^^^
+============
 
 ::
 
-    $ pip install -U pandasql
+    $ pip install -U https://github.com/aplavin/pandasql.git
 
 Basics
-^^^^^^
+======
 
-The main function used in pandasql is ``sqldf``. ``sqldf`` accepts 2
-parametrs - a sql query string - an set of session/environment variables
-(``locals()`` or ``globals()``)
+In addition to the original pandasql's ``sqldf`` function this fork has
+a class ``PandaSQL``, which new users are encouraged to use.
 
-Specifying ``locals()`` or ``globals()`` can get tedious. You can
-defined a short helper function to fix this.
+``sqldf`` function
+------------------
 
-::
+The main function used in original pandasql is ``sqldf``. ``sqldf``
+accepts one three parameters: - sql query string, - dict of environment
+variables (optional, if not specified assumed to be
+``{**locals(), **globals()}``) - database URI in the same format as in
+SQLAlchemy (optional, by default use in-memory SQLite database)
 
-    from pandasql import sqldf
-    pysqldf = lambda q: sqldf(q, globals())
+``PandaSQL`` class
+------------------
+
+The class is more convenient when you need to perform multiple queries
+(almost always): - first create the class, specifying db\_uri if not
+default: ``pdsql = PandaSQL(db_uri)`` - to execute queries just call
+``pdsql(query)`` (environment can also be specified expicitly)
 
 Querying
 ^^^^^^^^
 
-``pandasql`` uses `SQLite syntax <http://www.sqlite.org/lang.html>`__.
-Any ``pandas`` dataframes will be automatically detected by
-``pandasql``. You can query them as you would any regular SQL table.
+Any ``pandas`` dataframes will be automatically detected by ``pandasql``
+and you can query them as you would any regular SQL table.
 
 ::
 
     $ python
-    >>> from pandasql import sqldf, load_meat, load_births
-    >>> pysqldf = lambda q: sqldf(q, globals())
+    >>> from pandasql import PandaSQL, load_meat, load_births
     >>> meat = load_meat()
     >>> births = load_births()
-    >>> print pysqldf("SELECT * FROM meat LIMIT 10;").head()
+    >>> pdsql = PandaSQL()
+    >>> print pdsql("SELECT * FROM meat LIMIT 10;").head()
                       date  beef  veal  pork  lamb_and_mutton broilers other_chicken turkey
     0  1944-01-01 00:00:00   751    85  1280               89     None          None   None
     1  1944-02-01 00:00:00   713    77  1169               72     None          None   None
@@ -61,7 +71,7 @@ joins and aggregations are also supported
          INNER JOIN
             births b
                ON m.date = b.date;"""
-    >>> joined = pyqldf(q)
+    >>> joined = pdsql(q)
     >>> print joined.head()
                         date    beef  births
     403  2012-07-01 00:00:00  2200.8  368450
@@ -77,7 +87,7 @@ joins and aggregations are also supported
                   meat
                GROUP BY
                   year;"
-    >>> print pysqldf(q).head()
+    >>> print pdsql(q).head()
        year  beef_total
     0  1944        8801
     1  1945        9936
@@ -85,12 +95,8 @@ joins and aggregations are also supported
     3  1947       10096
     4  1948        8766
 
-More information and code samples available in the
+More information and code samples (by the author of the original
+version) available in the
 `examples <https://github.com/yhat/pandasql/blob/master/examples/demo.py>`__
-folder or on `our
+folder or on `his
 blog <http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html>`__.
-
-|Analytics|
-
-.. |Analytics| image:: https://ga-beacon.appspot.com/UA-46996803-1/pandasql/README.md
-   :target: https://github.com/yhat/pandasql
