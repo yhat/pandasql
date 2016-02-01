@@ -95,8 +95,10 @@ def get_outer_frame_variables():
     outer_frame = next(f
                        for f in inspect.getouterframes(inspect.currentframe())
                        if f.filename != cur_filename)
-    return {**outer_frame.frame.f_globals,
-            **outer_frame.frame.f_locals}
+    variables = {}
+    variables.update(outer_frame.frame.f_globals)
+    variables.update(outer_frame.frame.f_locals)
+    return variables
 
 
 def extract_table_names(query):

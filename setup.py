@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name="pandasql",
-    version="0.7.0",
+    version="0.7.1",
     author="Greg Lamp",
     author_email="greg@yhathq.com",
     url="https://github.com/yhat/pandasql/",

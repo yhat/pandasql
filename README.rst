@@ -14,7 +14,7 @@ Installation
 
 ::
 
-    $ pip install -U https://github.com/aplavin/pandasql.git
+    $ pip install -U git+https://github.com/aplavin/pandasql.git
 
 Basics
 ======
