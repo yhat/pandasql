@@ -77,6 +77,7 @@ class PandaSQL:
         else:
             # create the connection
             conn = self.engine.connect()
+            conn.text_factory = str
             self._init_connection(conn)
             try:
                 yield conn
