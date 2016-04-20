@@ -10,7 +10,7 @@ manipulating and cleaning data for people new to Python or `pandas`.
 
 # Installation
 ```
-$ pip install -U git+https://github.com/aplavin/pandasql.git
+$ pip install -U pandasql
 ```
 
 # Basics
