@@ -6,10 +6,9 @@ import re
 from warnings import catch_warnings, filterwarnings
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
-
+from sqlalchemy.event import listen
 
 __all__ = ['PandaSQL', 'PandaSQLException', 'sqldf']
-
 
 class PandaSQLException(Exception):
     pass
@@ -24,6 +23,10 @@ class PandaSQL:
         :param persist: keep tables in database between different calls on the same object of this class.
         """
         self.engine = create_engine(db_uri, poolclass=NullPool)
+
+        if self.engine.name == 'sqlite':
+            listen(self.engine, 'connect', self._set_text_factory)
+
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
 
@@ -77,7 +80,6 @@ class PandaSQL:
         else:
             # create the connection
             conn = self.engine.connect()
-            conn.text_factory = str
             self._init_connection(conn)
             try:
                 yield conn
@@ -88,6 +90,9 @@ class PandaSQL:
     def _init_connection(self, conn):
         if self.engine.name == 'postgresql':
             conn.execute('set search_path to pg_temp')
+
+    def _set_text_factory(self, dbapi_con, connection_record):
+        dbapi_con.text_factory = str
 
 
 def get_outer_frame_variables():
