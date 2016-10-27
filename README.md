@@ -13,9 +13,9 @@ $ pip install -U pandasql
 #### Basics
 The main function used in pandasql is `sqldf`. `sqldf` accepts 2 parametrs
    - a sql query string
-   - an set of session/environment variables (`locals()` or `globals()`)
+   - a set of session/environment variables (`locals()` or `globals()`)
 
-Specifying `locals()` or `globals()` can get tedious. You can defined a short 
+Specifying `locals()` or `globals()` can get tedious. You can define a short 
 helper function to fix this.
 
     from pandasql import sqldf
