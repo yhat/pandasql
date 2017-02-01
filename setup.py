@@ -7,11 +7,14 @@ setup(
     author="Greg Lamp",
     author_email="greg@yhathq.com",
     url="https://github.com/yhat/pandasql/",
-    license=open("LICENSE.txt").read(),
+    license="MIT",
     packages=find_packages(),
     package_dir={"pandasql": "pandasql"},
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
     long_description=open("README.rst").read(),
     install_requires=['numpy', 'pandas', 'sqlalchemy'],
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+    ],
 )
