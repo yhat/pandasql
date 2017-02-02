@@ -90,9 +90,16 @@ class PandaSQL:
     def _init_connection(self, conn):
         if self.engine.name == 'postgresql':
             conn.execute('set search_path to pg_temp')
+        elif self.engine.name == 'sqlite':
+            conn.connection.connection.create_function("REGEXP", 2, regex)
 
     def _set_text_factory(self, dbapi_con, connection_record):
         dbapi_con.text_factory = str
+
+
+def regex(expr, item):
+    reg = re.compile(expr)
+    return reg.match(item) is not None
 
 
 def get_outer_frame_variables():
