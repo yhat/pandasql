@@ -47,11 +47,11 @@ joins and aggregations are also supported
 >>> q = """SELECT
         m.date, m.beef, b.births
      FROM
-        meats m
+        meat m
      INNER JOIN
         births b
            ON m.date = b.date;"""
->>> joined = pyqldf(q)
+>>> joined = pysqldf(q)
 >>> print joined.head()
                     date    beef  births
 403  2012-07-01 00:00:00  2200.8  368450
