@@ -15,7 +15,7 @@ class PandaSQLException(Exception):
 
 
 class PandaSQL:
-    def __init__(self, db_uri='sqlite:///:memory:', persist=False):
+    def __init__(self, db_uri='sqlite:///:memory:', persist=False, sqlite_connect_listener=None):
         """
         Initialize with a specific database.
 
@@ -26,6 +26,8 @@ class PandaSQL:
 
         if self.engine.name == 'sqlite':
             listen(self.engine, 'connect', self._set_text_factory)
+        if self.engine.name == 'sqlite' and sqlite_connect_listener is not None:
+            listen(self.engine, 'connect', sqlite_connect_listener)
 
         if self.engine.name not in ('sqlite', 'postgresql'):
             raise PandaSQLException('Currently only sqlite and postgresql are supported.')
@@ -126,7 +128,7 @@ def write_table(df, tablename, conn):
                index=not any(name is None for name in df.index.names))  # load index into db if all levels are named
 
 
-def sqldf(query, env=None, db_uri='sqlite:///:memory:', params=None):
+def sqldf(query, env=None, db_uri='sqlite:///:memory:', persist=False, sqlite_connect_listener=None, params=None):
     """
     Query pandas data frames using sql syntax
     This function is meant for backward compatibility only. New users are encouraged to use the PandaSQL class.
@@ -158,4 +160,4 @@ def sqldf(query, env=None, db_uri='sqlite:///:memory:', params=None):
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
     """
-    return PandaSQL(db_uri)(query, env, params)
+    return PandaSQL(db_uri, persist, sqlite_connect_listener)(query, env, params)
