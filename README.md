@@ -1,8 +1,8 @@
 pandasql
 ========
 
-`pandasql` allows you to query `pandas` DataFrames using SQL syntax. It works 
-similarly to `sqldf` in R. `pandasql` seeks to provide a more familiar way of 
+`pandasql` allows you to query `pandas` DataFrames using SQL syntax. It works
+similarly to `sqldf` in R. `pandasql` seeks to provide a more familiar way of
 manipulating and cleaning data for people new to Python or `pandas`.
 
 #### Installation
@@ -15,15 +15,15 @@ The main function used in pandasql is `sqldf`. `sqldf` accepts 2 parametrs
    - a sql query string
    - a set of session/environment variables (`locals()` or `globals()`)
 
-Specifying `locals()` or `globals()` can get tedious. You can define a short 
+Specifying `locals()` or `globals()` can get tedious. You can define a short
 helper function to fix this.
 
     from pandasql import sqldf
-    pysqldf = lambda q: sqldf(q, globals())
+    pysqldf = lambda q, params=None: sqldf(q, locals(), params=params)
 
 #### Querying
-`pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` 
-dataframes will be automatically detected by `pandasql`. You can query them as 
+`pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas`
+dataframes will be automatically detected by `pandasql`. You can query them as
 you would any regular SQL table.
 
 
@@ -76,9 +76,19 @@ joins and aggregations are also supported
 4  1948        8766
 ```
 
+queries with parameters are supported
+```
+>>> iris = load_iris()
+>>> iris_df = pd.DataFrame(iris.data, columns=iris.feature_names)
+>>> print pyqldf("SELECT DISTINCT species FROM iris_df WHERE species <> ? ", params=('versicolor',) )
+     species
+0     setosa
+1  virginica
+```
+
 More information and code samples available in the [examples](https://github.com/yhat/pandasql/blob/master/examples/demo.py)
  folder or on [our blog](http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html).
 
 
 
-[![Analytics](https://ga-beacon.appspot.com/UA-46996803-1/pandasql/README.md)](https://github.com/yhat/pandasql)    
+[![Analytics](https://ga-beacon.appspot.com/UA-46996803-1/pandasql/README.md)](https://github.com/yhat/pandasql)
