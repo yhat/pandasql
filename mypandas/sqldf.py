@@ -29,10 +29,11 @@ class PandaSQL:
         if self.engine.name == "sqlite":
             listen(self.engine, "connect", self._set_text_factory)
 
-        if self.engine.name not in ("sqlite", "postgresql"):
-            raise PandaSQLException(
-                "Currently only sqlite and postgresql are supported."
-            )
+        # INTO THE BREACH
+        # if self.engine.name not in ("sqlite", "postgresql"):
+        #     raise PandaSQLException(
+        #         "Currently only sqlite and postgresql are supported."
+        #     )
 
         self.persist = persist
         self.loaded_tables = set()
