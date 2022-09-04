@@ -22,7 +22,7 @@ from sqlalchemy.pool import NullPool
 from mypandas.sqldf import PandaSQL
 
 URI = "mysql://root:password@localhost/leetcode"
-mpd = PandaSQL(URI)("SELECT * FROM Purchases;", locals())
+df = PandaSQL(URI)("SELECT * FROM Purchases;", locals())
 
 # from MySQLdb import _mysql
 
