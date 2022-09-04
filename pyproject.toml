@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mypandas"
+version = "0.0.1"
+authors = [
+  { name="yrom1", email="ryanm.inbox@gmail.com" },
+]
+description = "SQL for Pandas, with a MySQL backend."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yrom1/mypandas"
+"Bug Tracker" = "https://github.com/yrom1/mypandas/issues"
+
