@@ -1,3 +1,0 @@
-recursive-include pandasql/data *
-include *.txt
-include *.md
