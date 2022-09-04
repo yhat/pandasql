@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en"><head><script src="//archive.org/includes/analytics.js?v=cf34f82" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app228.us.archive.org';v.server_ms=544;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="/_static/js/bundle-playback.js?v=KTqwAcYd" charset="utf-8"></script>
+<script type="text/javascript" src="/_static/js/wombat.js?v=UHAOicsW" charset="utf-8"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html","20130706193303","https://web.archive.org/","web","/_static/",
+	      "1373139183");
+</script>
+<link rel="stylesheet" type="text/css" href="/_static/css/banner-styles.css?v=fantwOh2" />
+<link rel="stylesheet" type="text/css" href="/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+    <meta charset="utf-8">
+    <title>SQL for pandas DataFrames</title>
+    <!-- meta tags go here -->
+
+<meta name="description" content="pandasql - yhat/pandassql - SQL select on pandas DataFrame - Source Code on Github">
+<meta name="keywords" content="sqldf, sql, data analysis, dataframe, data frame, data.frame, as.dataframe, pandas, python pandas, pandas for data analysis, pandas python tutorial, query pandas dataframe, pandas df, R dataframes, sqldf for r, python pandas join, python pandas merge, python pandas append, python pandas melt, python pandas reshape, python pandas and R, python ddply, ddply for python, apply function pandas, pandas apply, pandas split apply combine, indexing python pandas, slicing python pandas, slice dataframe python, data munging, data wrangling, manipulating data, cleaning data, learning pandas python, tutorial python pandas">
+
+
+    <!-- Le styles -->
+    <link href="/web/20130706193303cs_/http://blog.yhathq.com/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/web/20130706193303cs_/http://blog.yhathq.com/static/bootstrap/css/text.css" rel="stylesheet">
+    <link href="/web/20130706193303cs_/http://blog.yhathq.com/static/bootstrap/css/yhat-theme.css" rel="stylesheet">
+    <link href="/web/20130706193303cs_/http://blog.yhathq.com/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- <link href="../static/css/master.css" rel="stylesheet"> -->
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="bootstrap/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/web/20130706193303im_/http://blog.yhathq.com/posts/bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/web/20130706193303im_/http://blog.yhathq.com/posts/bootstrap/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/web/20130706193303im_/http://blog.yhathq.com/posts/bootstrap/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="/web/20130706193303im_/http://blog.yhathq.com/posts/bootstrap/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="/web/20130706193303im_/http://blog.yhathq.com/posts/bootstrap/ico/favicon.png">
+    <link href="/web/20130706193303im_/http://blog.yhathq.com/static/favicon.ico" rel="shortcut icon">
+    <script type="text/javascript" src="/web/20130706193303js_/http://blog.yhathq.com/static/js/jquery-1.8.3.min.js"></script>
+  </head>
+
+  <body><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  /*min-width:800px !important;*/
+}
+</style>
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20130706193303/http%3A//blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="/_static/images/toolbar/wayback-toolbar-logo-100.png, /_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, /_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20130706193303" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+		<div class="s" id="wm-nav-captures" style="flex:1;">
+	  	  <a class="t" href="/web/20130706193303*/http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html" title="See a list of every capture for this URL">51 captures</a>
+	  <div class="r" title="Timespan for captures of this URL">06 Jul 2013 - 11 Nov 2020</div>
+	  </div>
+	<div class="k">
+	  <a href="" id="wm-graph-anchor">
+	    <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+	      <canvas id="wm-sparkline-canvas" width="675" height="27" border="0"></canvas>
+	    </div>
+	  </a>
+	</div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+	<tbody>
+	  <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+	  <tr class="m">
+	    <td class="b" nowrap="nowrap">Jun</td>
+	    <td class="c" id="displayMonthEl" title="You are here: 19:33:03 Jul 06, 2013">JUL</td>
+	    <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20130831192614/http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html" title="31 Aug 2013"><strong>Aug</strong></a></td>
+	  </tr>
+	  <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+	  <tr class="d">
+	    <td class="b" nowrap="nowrap"><img src="/_static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" /></td>
+	    <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 19:33:03 Jul 06, 2013">06</td>
+	    <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20130731220149/http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html" title="22:01:49 Jul 31, 2013"><img src="/_static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a></td>
+	  </tr>
+	  <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+	  <tr class="y">
+	    <td class="b" nowrap="nowrap">2012</td>
+	    <td class="c" id="displayYearEl" title="You are here: 19:33:03 Jul 06, 2013">2013</td>
+	    <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20140708092624/http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html" title="08 Jul 2014"><strong>2014</strong></a></td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+        	<span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#"
+	     title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+	</span>
+        	<a class="xxs" href="http://faq.web.archive.org/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+	<a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20130706193303/http://web.archive.org/screenshot/http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+	<a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20130706193303/http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+	<a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20130706193303/http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+	<a id="wm-expand" class="wm-btn wm-closed" href="#expand" onclick="__wm.ex(event);return false;"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+                    <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20130706193303/http://blog.yhathq.com:80/posts/pandasql-sql-for-pandas-dataframes.html</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(675,27,25,2,"web","http://blog.yhathq.com/posts/pandasql-sql-for-pandas-dataframes.html","20130706193303",1996,"/_static/",["/_static/css/banner-styles.css?v=fantwOh2","/_static/css/iconochive.css?v=qtvMKcIJ"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+    <!-- google analytics -->
+    <script type="text/javascript">
+      var _gaq = _gaq || []
+        , pluginUrl = '//web.archive.org/web/20130706193303/http://www.google-analytics.com/plugins/ga/inpage_linkid.js';
+
+        _gaq.push(
+            ['_require', 'inpage_linkid', pluginUrl]
+          , ['_setAccount', 'UA-37140626-1']
+          , ['_setDomainName', 'yhathq.com']
+          , ['_setAllowLinker', true]
+          , ['_trackPageview']
+        );
+
+      (function () {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript';
+          ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20130706193303/https://ssl' : 'https://web.archive.org/web/20130706193303/http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <!-- hackernews button -->
+    <script>
+      (function(d, t) {
+          var g = d.createElement(t),
+              s = d.getElementsByTagName(t)[0];
+          g.src = '../static/js/hn.min.js';
+          s.parentNode.insertBefore(g, s);
+      }(document, 'script'));
+    </script>
+    <div class="container-narrow">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="/web/20130706193303/http://blog.yhathq.com/">Blog Home</a></li>
+          <li><a href="https://web.archive.org/web/20130706193303/http://www.yhathq.com/">Yhat Home</a></li>
+          <li><a href="/web/20130706193303/http://blog.yhathq.com/rss.xml">RSS</a></li>
+          <li><a href="https://web.archive.org/web/20130706193303/https://twitter.com/YhatHQ" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @YhatHQ</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></li>
+        </ul>
+
+        <h3 class="muted"><span><h1><a id="yhat_logo" href="https://web.archive.org/web/20130706193303/http://promo.yhathq.com/yhat-a-launch/" title="yhathq.com"><span><span class="Y">&ycirc;</span><span class="Hat">hat</span></span></a></h1></span>
+        </h3>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <form action="https://web.archive.org/web/20130706193303/http://yhathq.us7.list-manage1.com/subscribe/post?u=e2a8055dafe6eb90712f4f08d&amp;id=1e09ef2061" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="form-inline validate" target="_blank" novalidate>
+          <input type="email" value="" name="EMAIL" class="input-large email" id="mce-EMAIL" style="height: 45px; font-size: 21px;" placeholder="Email Address" required>
+          <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="btn btn-success"><i>Get Updates</i></button>
+        </form>
+      </div>
+
+      <hr>
+
+      <!-- this is where the page content goes -->
+
+<article>	<span style="float:right;margin-top:35px;"><a href="https://web.archive.org/web/20130706193303/https://twitter.com/share" class="twitter-share-button" data-via="yhathq" data-dnt="true">Tweet</a><a href="https://web.archive.org/web/20130706193303/http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a></span>
+
+	<div>
+		<!-- link to last post -->
+		<span class="prev pull-left">
+
+	      <a id="link_to_previous" href="/web/20130706193303/http://blog.yhathq.com/posts/R-and-pandas-and-what-ive-learned-about-each.html">&laquo; R and pandas and what I&#39;ve learned about each</a>
+
+	  </span>
+	  <!-- link to next post -->
+	  <span class="next pull-right">
+
+	      <a id="link_to_next" href="/web/20130706193303/http://blog.yhathq.com/posts/logistic-regression-and-python.html">Logistic Regression in Python &raquo;</a>
+
+	  </span>
+  </div>
+  <br>
+	<header>
+		<h1>SQL for pandas DataFrames</h1>
+		<h5><time pubdate="pubdate">February 24, 2013</time> by <span class="author">yhat</address></h5>
+	</header>
+
+
+
+
+
+<p style="margin-bottom:0px;padding-bottom:0px;">We recently wrote a post about <a href="10-R-packages-I-wish-I-knew-about-earlier.html">10 of our favorite R packages</a>, and the response has been wonderful:</p>
+<br>
+<div style="float:right;margin-top:0px;padding-top:0px;">
+	<blockquote width="475" data-conversation="none" data-cards="hidden" class="twitter-tweet"><p>@<a href="https://web.archive.org/web/20130706193303/https://twitter.com/blcartwright">blcartwright</a> This post has a good example of connecting R to various DB drivers, along with other useful R packages. <a href="https://web.archive.org/web/20130706193303/http://t.co/eCcZfxn5" title="http://blog.yhathq.com/posts/10-R-packages-I-wish-I-knew-about-earlier.html#dbdriver">blog.yhathq.com/posts/10-R-pac…</a></p>&mdash; Albert Lyu (@thinkbluecrew) <a href="https://web.archive.org/web/20130706193303/https://twitter.com/thinkbluecrew/status/303659298276388864">February 19, 2013</a></blockquote>
+	<script async src="//web.archive.org/web/20130706193303js_/http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+	<blockquote width="475" class="twitter-tweet"><p>10 R packages I wish I knew about earlier <a href="https://web.archive.org/web/20130706193303/http://t.co/qELp9L6p" title="http://zite.to/YThLiN">zite.to/YThLiN</a> &gt; including RODBC for getting data from SQL Server</p>&mdash; Phil_Factor (@Phil_Factor) <a href="https://web.archive.org/web/20130706193303/https://twitter.com/Phil_Factor/status/301245637859610625">February 12, 2013</a></blockquote>
+	<script async src="//web.archive.org/web/20130706193303js_/http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+<div>
+	<blockquote width="400" class="twitter-tweet"><p>R packages I wish I knew about earlier <a href="https://web.archive.org/web/20130706193303/http://t.co/k5k9DVok" title="http://bit.ly/12rIaEl">bit.ly/12rIaEl</a> <a href="https://web.archive.org/web/20130706193303/https://twitter.com/search/%23rstats">#rstats</a> or, 10 reasons to always start your analysis in R</p>&mdash; Drew Conway (@drewconway) <a href="https://web.archive.org/web/20130706193303/https://twitter.com/drewconway/status/301316735557058561">February 12, 2013</a></blockquote>
+	<script async src="//web.archive.org/web/20130706193303js_/http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+	<blockquote width="400" class="twitter-tweet"><p>MT: 10 R packages I also wish I knew about earlier!! So many hrs lost! <a href="https://web.archive.org/web/20130706193303/http://t.co/0W72niSS" title="http://bit.ly/12rIaEl">bit.ly/12rIaEl</a> <a href="https://web.archive.org/web/20130706193303/https://twitter.com/search/%23rstats">#rstats</a> via @<a href="https://web.archive.org/web/20130706193303/https://twitter.com/drewconway">drewconway</a> &amp; @<a href="https://web.archive.org/web/20130706193303/https://twitter.com/resiliencesci">resiliencesci</a></p>&mdash; Laura Dee (@LauraEllenDee) <a href="https://web.archive.org/web/20130706193303/https://twitter.com/LauraEllenDee/status/301710585110884352">February 13, 2013</a></blockquote>
+	<script async src="//web.archive.org/web/20130706193303js_/http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+<p>We've had the opportunity to chat with several of you about your experiences learning and using R and Python, and we're extremely appreciative for your questions, candor, and suggestions.</p>
+
+<p>Many experienced R users graciously wrote to thank us for turning them on to lesser known R packages like <a href="https://web.archive.org/web/20130706193303/http://cran.r-project.org/web/packages/qcc/index.html" title="qcc - quality control package for R programming language">qcc</a> and <a href="https://web.archive.org/web/20130706193303/http://cran.r-project.org/web/packages/forecast/index.html" title="forecast - univariate time series forecasts for R programming language">forecast</a>, and a lot of you blogged, emailed, and tweeted about discovering the <a href="" title="sqldf - ">sqldf</a> package through our post which we really appreciate. This did not go unnoticed!</p>
+
+<p>This is a post about <a href="https://web.archive.org/web/20130706193303/https://github.com/yhat/pandasql" title="yhat/pandasql - github - manipulating pandas DataFrames using SQL"><code>pandasql</code></a>, a library we're open-sourcing for Python which lets you use SQL on <code>pandas</code> dataframes.</p>
+
+<h3>yhat/pandasql</h3>
+<h4>Overview</h4>
+	<p><code>pandasql</code> is a <a href="https://web.archive.org/web/20130706193303/https://pypi.python.org/pypi/pandasql/0.1.0" title="pandasql on PyPi">Python package</a> for runing SQL statements on <a href="https://web.archive.org/web/20130706193303/http://pandas.pydata.org/pandas-docs/dev/dsintro.html" title="pandas data structures documentation">pandas <code>DataFrames</code></a>. It has a lot in common with the <a href="https://web.archive.org/web/20130706193303/http://cran.r-project.org/web/packages/sqldf/index.html" title="sqldf package for r programming language"><code>sqldf</code></a> package in R.</p>
+
+	<p>Behind the scenes, <code>pandasql</code> uses the <code>pandas.io.sql</code> module to transfer data between <code>DataFrame</code>s and SQLite databases. Operations are performed in SQL, the results returned, and the database is then torn down. The library makes heavy use of <code>pandas</code> <code>write_frame</code> and <code>frame_query</code>, two functions which let you read and write to/from <code>pandas</code> and (most) any SQL database.</p>
+
+<h4>Installation</h4>
+<p>You can use pip to install <code>pandasql</code>. Alternatively, you can clone <a href="https://web.archive.org/web/20130706193303/https://github.com/yhat/pandasql" title="pandasql source code on github">the Github repo</a> and install from source.</p>
+<pre>$ pip install -U pandasql</pre>
+
+<h4>Built-in Datasets</h4>
+	<p><code>pandasql</code> has two built-in datasets which we'll use for the examples below.</p>
+	<ul id="pandasql-built-in-datesets">
+		<li id="meat_dataset_link"><a href="https://web.archive.org/web/20130706193303/http://www.ers.usda.gov/data-products/livestock-meat-domestic-data.aspx" title="Livestock &amp; Meat Data - dataset from U.S. Dept. of Agriculture"><code>meat</code>:</a> Dataset from the U.S. Dept. of Agriculture containing metrics on livestock, dairy, and poultry outlook and production.</li>
+		<li id="births_dataset_link"><a href="https://web.archive.org/web/20130706193303/http://data.un.org/Data.aspx?d=POP&amp;f=tableCode:55" title="Live births by month of birth - dataset from United Nations Statistics Division"><code>births</code>:</a> Dataset from the United Nations Statistics Division containing demographic statistics on live births by month.</li>
+	</ul>
+	<br>
+	<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5025113.js"></script>
+	<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/glamp/5025662.js"></script>
+	<img src="/web/20130706193303im_/http://blog.yhathq.com/static/img/butcher_vs_babies.png" style="max-width: 800px; border-style: solid;">
+
+<h3>Usage</h3>
+
+<h4>Basics</h4>
+	<p>Write some SQL and execute it against your <code>pandas</code> <code>DataFrame</code> by substituting DataFrames for tables.</p>
+	<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021577.js"></script>
+	<p><code>pandasql</code> creates a DB, schema and all, loads your data, and runs your SQL.</p>
+
+<h4>Aggregation</h4>
+<p><code>pandasql</code> supports aggregation. You can use <a href="https://web.archive.org/web/20130706193303/http://www.w3schools.com/sql/sql_alias.asp">aliased column names</a> or column numbers in your <code>group by</code> clause.</p>
+<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021597.js"></script>
+
+<h4><code>locals()</code> vs. <code>globals()</code></h4>
+<p><code>pandasql</code> needs to have access to other variables in your session/environment. You can pass <code>locals()</code> to <code>pandasql</code> when executing a SQL statement, but if you're running a lot of queries that might be a pain. To avoid passing locals all the time, you can add this helper function to your script to set <code>globals()</code> like so:</p>
+<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021621.js"></script>
+
+<h4>joins</h4>
+<p>You can join dataframes using normal SQL syntax.</p>
+<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021628.js"></script>
+
+<h4><code>WHERE</code> conditions</h4>
+<p>Here's a <code>WHERE</code> clause.</p>
+<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021648.js"></script>
+
+<h4>It's just SQL</h4>
+<p>Since <code>pandasql</code> is powered by <a href="https://web.archive.org/web/20130706193303/http://docs.python.org/2/library/sqlite3.html">SQLite3</a>, you can do most anything you can do in SQL. Here are some examples using common SQL features such as subqueries, order by, functions, and unions.</p>
+<script src="https://web.archive.org/web/20130706193303js_/https://gist.github.com/hernamesbarbara/5021659.js"></script>
+
+<h4>Final thoughts</h4>
+<p><code>pandas</code> is an incredible tool for data analysis in large part, we think, because it is extremely digestible, succinct, and expressive. Ultimately, there's a <em>ton</em> of reasons to learn the nuances of <code>merge</code>, <code>join</code>, <code>concatecate</code>, <code>melt</code> and other native <code>pandas</code> features for slicing and dicing data. Check out the <a href="https://web.archive.org/web/20130706193303/http://pandas.pydata.org/pandas-docs/stable/merging.html">docs</a> for some examples.</p>
+
+<p>However, our hope is that <code>pandasql</code> will be a helpful learning tool for folks new to Python and pandas. In my own personal experience learning R, <code>sqldf</code> was a familiar interface helping me become highly productive with a new tool as quickly as possible. We hope you'll check out <code>pandasql</code>; if you do, please let us know what you think!</p>
+<p>Email: <a href="https://web.archive.org/web/20130706193303/mailto:info@yhathq.com">info@yhathq.com</a></p>
+<p>Twitter: <a href="https://web.archive.org/web/20130706193303/http://www.twitter.com/YhatHQ">@YhatHQ</a></p>
+
+
+
+
+
+	<hr>
+	<div style="margin:30px 100px;">
+	<span style="float:right;margin-top:35px;"><a href="https://web.archive.org/web/20130706193303/https://twitter.com/share" class="twitter-share-button" data-via="yhathq" data-dnt="true">Tweet</a></span>
+	</div>
+
+	<div style="margin:20px 0px 50px 0px;">
+			<h5>Wow, thanks for reading far down the page! If you're this interested, why don't you sign up for Yhat? It's the easiest way to operationalize predictive models!</h5>
+			<div class="control-group">
+				<a id="button_for_info" href="https://web.archive.org/web/20130706193303/http://promo.yhathq.com/yhat-a-launch/" title="Learn More About yhat!">
+					<button class="btn btn-info">Learn More!</button></a>
+			</div>
+			      <div class="footer">
+			      		<p>Contact us at <a id="email_us_on_blog" href="https://web.archive.org/web/20130706193303/mailto:info@yhathq.com">info@yhathq.com</a> for details.</p>
+        				<p>© Yhat, Inc 2013</p>
+      				</div>
+		</div>
+	</div>
+<hr>
+</article>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//web.archive.org/web/20130706193303/http://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+
+      <!-- footer -->
+      <hr>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/web/20130706193303js_/http://blog.yhathq.com/static/bootstrap/js/jquery-1.8.3.min.js"></script>
+    <script src="/web/20130706193303js_/http://blog.yhathq.com/static/bootstrap/js/bootstrap.js"></script>
+
+</body>
+</html><!--
+     FILE ARCHIVED ON 19:33:03 Jul 06, 2013 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 07:28:39 Sep 04, 2022.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 321.388
+  exclusion.robots: 0.308
+  exclusion.robots.policy: 0.292
+  RedisCDXSource: 128.196
+  esindex: 0.012
+  LoadShardBlock: 170.296 (3)
+  PetaboxLoader3.datanode: 202.302 (4)
+  CDXLines.iter: 18.899 (3)
+  load_resource: 214.527
+  PetaboxLoader3.resolve: 100.253
+-->
