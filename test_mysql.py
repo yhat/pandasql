@@ -21,5 +21,11 @@ from sqlalchemy.pool import NullPool
 
 from mypandas.sqldf import PandaSQL
 
-URI = "mysql://root@localhost/leetcode"
-PandaSQL(URI, locals())
+URI = "mysql://root:password@localhost/leetcode"
+mpd = PandaSQL(URI)("SELECT * FROM Purchases;", locals())
+
+# from MySQLdb import _mysql
+
+# db = _mysql.connect(
+#     host="localhost", user="root", password="password", database="leetcode"
+# )
