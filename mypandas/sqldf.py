@@ -9,7 +9,7 @@ from sqlalchemy.event import listen
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
 
-__all__ = ["PandaSQL", "PandaSQLException", "sqldf"]
+__all__ = ["MyPandas", "PandaSQL", "PandaSQLException", "sqldf"]
 
 
 class PandaSQLException(Exception):
@@ -173,3 +173,6 @@ def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
     >>> sqldf("select avg(x) from df;", locals())
     """
     return PandaSQL(db_uri)(query, env)
+
+
+MyPandas = PandaSQL

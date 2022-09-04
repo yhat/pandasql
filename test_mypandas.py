@@ -1,8 +1,8 @@
-from mypandas.sqldf import PandaSQL
+from mypandas.sqldf import MyPandas
 
 URI = "mysql://root:password@localhost/leetcode"
 QUERY = """
 SELECT *
 FROM Purchases p1, Purchases p2;
 """
-print(PandaSQL(URI)(QUERY, locals()))
+print(MyPandas(URI)(QUERY, locals()))
