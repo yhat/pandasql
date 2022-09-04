@@ -1,21 +1,23 @@
 import inspect
-from contextlib import contextmanager
-from pandas.io.sql import to_sql, read_sql
-from sqlalchemy import create_engine
 import re
+from contextlib import contextmanager
 from warnings import catch_warnings, filterwarnings
+
+from pandas.io.sql import read_sql, to_sql
+from sqlalchemy import create_engine
+from sqlalchemy.event import listen
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
-from sqlalchemy.event import listen
 
-__all__ = ['PandaSQL', 'PandaSQLException', 'sqldf']
+__all__ = ["PandaSQL", "PandaSQLException", "sqldf"]
+
 
 class PandaSQLException(Exception):
     pass
 
 
 class PandaSQL:
-    def __init__(self, db_uri='sqlite:///:memory:', persist=False):
+    def __init__(self, db_uri="sqlite:///:memory:", persist=False):
         """
         Initialize with a specific database.
 
@@ -24,11 +26,13 @@ class PandaSQL:
         """
         self.engine = create_engine(db_uri, poolclass=NullPool)
 
-        if self.engine.name == 'sqlite':
-            listen(self.engine, 'connect', self._set_text_factory)
+        if self.engine.name == "sqlite":
+            listen(self.engine, "connect", self._set_text_factory)
 
-        if self.engine.name not in ('sqlite', 'postgresql'):
-            raise PandaSQLException('Currently only sqlite and postgresql are supported.')
+        if self.engine.name not in ("sqlite", "postgresql"):
+            raise PandaSQLException(
+                "Currently only sqlite and postgresql are supported."
+            )
 
         self.persist = persist
         self.loaded_tables = set()
@@ -88,19 +92,21 @@ class PandaSQL:
                 conn.close()
 
     def _init_connection(self, conn):
-        if self.engine.name == 'postgresql':
-            conn.execute('set search_path to pg_temp')
+        if self.engine.name == "postgresql":
+            conn.execute("set search_path to pg_temp")
 
     def _set_text_factory(self, dbapi_con, connection_record):
         dbapi_con.text_factory = str
 
 
 def get_outer_frame_variables():
-    """ Get a dict of local and global variables of the first outer frame from another file. """
+    """Get a dict of local and global variables of the first outer frame from another file."""
     cur_filename = inspect.getframeinfo(inspect.currentframe()).filename
-    outer_frame = next(f
-                       for f in inspect.getouterframes(inspect.currentframe())
-                       if f.filename != cur_filename)
+    outer_frame = next(
+        f
+        for f in inspect.getouterframes(inspect.currentframe())
+        if f.filename != cur_filename
+    )
     variables = {}
     variables.update(outer_frame.frame.f_globals)
     variables.update(outer_frame.frame.f_locals)
@@ -108,25 +114,32 @@ def get_outer_frame_variables():
 
 
 def extract_table_names(query):
-    """ Extract table names from an SQL query. """
+    """Extract table names from an SQL query."""
     # a good old fashioned regex. turns out this worked better than actually parsing the code
-    tables_blocks = re.findall(r'(?:FROM|JOIN)\s+(\w+(?:\s*,\s*\w+)*)', query, re.IGNORECASE)
-    tables = [tbl
-              for block in tables_blocks
-              for tbl in re.findall(r'\w+', block)]
+    tables_blocks = re.findall(
+        r"(?:FROM|JOIN)\s+(\w+(?:\s*,\s*\w+)*)", query, re.IGNORECASE
+    )
+    tables = [tbl for block in tables_blocks for tbl in re.findall(r"\w+", block)]
     return set(tables)
 
 
 def write_table(df, tablename, conn):
-    """ Write a dataframe to the database. """
+    """Write a dataframe to the database."""
     with catch_warnings():
-        filterwarnings('ignore',
-                       message='The provided table name \'%s\' is not found exactly as such in the database' % tablename)
-        to_sql(df, name=tablename, con=conn,
-               index=not any(name is None for name in df.index.names))  # load index into db if all levels are named
+        filterwarnings(
+            "ignore",
+            message="The provided table name '%s' is not found exactly as such in the database"
+            % tablename,
+        )
+        to_sql(
+            df,
+            name=tablename,
+            con=conn,
+            index=not any(name is None for name in df.index.names),
+        )  # load index into db if all levels are named
 
 
-def sqldf(query, env=None, db_uri='sqlite:///:memory:'):
+def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
     """
     Query pandas data frames using sql syntax
     This function is meant for backward compatibility only. New users are encouraged to use the PandaSQL class.

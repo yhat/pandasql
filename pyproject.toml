@@ -22,3 +22,8 @@ classifiers = [
 "Homepage" = "https://github.com/yrom1/mypandas"
 "Bug Tracker" = "https://github.com/yrom1/mypandas/issues"
 
+[tool.ty]
+type_checker = "mypy"
+
+[tool.mypy]
+ignore_missing_imports = true
