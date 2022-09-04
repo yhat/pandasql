@@ -1,17 +1,3 @@
-# mypandas — https://github.com/yrom1/mypandas
-
-```py
-from mypandas.sqldf import PandaSQL
-
-URI = "mysql://root:password@localhost/leetcode"
-QUERY = """
-SELECT *
-FROM Purchases p1, Purchases p2;
-"""
-print(PandaSQL(URI)(QUERY, locals()))
-
-```
-```
      user_id          time_stamp  amount  user_id          time_stamp  amount
 0          4 2022-11-24 21:50:35    1260        1 2022-07-27 08:41:59    1059
 1          5 2022-02-01 05:05:34    6756        1 2022-07-27 08:41:59    1059
@@ -26,5 +12,3 @@ print(PandaSQL(URI)(QUERY, locals()))
 143        1 2022-07-27 08:41:59    1059        4 2022-11-24 21:50:35    1260
 
 [144 rows x 6 columns]
-
-```
