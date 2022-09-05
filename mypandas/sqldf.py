@@ -12,7 +12,7 @@ from sqlalchemy.pool import NullPool
 
 __all__ = ["MyPandas", "PandaSQL", "MyPandasException", "sqldf"]
 
-_PRINT = True
+_PRINT = False
 TEMP_DB_NAME = "__MYPANDAS_TEMP"
 
 
