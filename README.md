@@ -1,4 +1,6 @@
-# [mypandas](https://github.com/yrom1/mypandas)
+# [mypandas](https://github.com/yrom1/mypandas) — MySQL for Pandas
+
+A package that lets you query pandas DataFrames with MySQL!
 
 ## Notice
 This is a work in progress!
