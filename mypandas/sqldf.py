@@ -9,9 +9,9 @@ from sqlalchemy.event import listen
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
 
-# __all__ = ["MyPandas", "PandaSQL", "PandaSQLException", "sqldf"]
+__all__ = ["MyPandas", "PandaSQL", "MyPandasException", "sqldf"]
 
-_PRINT = True
+_PRINT = False
 
 
 def _print(*args, **kwargs):

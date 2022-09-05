@@ -1,8 +1,16 @@
 from mypandas.sqldf import MyPandas
+from mypandas import load_births
+import pandas as pd
 
-URI = "mysql://root:password@localhost/leetcode"
+births = load_births()
+assert type(births) == pd.DataFrame
+URI = "mysql://root:password@localhost/mypandas"
 QUERY = """
-SELECT *
-FROM Purchases p1, Purchases p2;
+-- Yup, this works!
+WITH cte AS (
+    SELECT b1.date d1, b1.births b1, b2.date d2, b2.births b2
+    FROM births b1, births b2
+)
+SELECT * FROM cte;
 """
 print(MyPandas(URI)(QUERY, locals()))
