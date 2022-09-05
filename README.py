@@ -1,6 +1,11 @@
 README = f"""\
 # mypandas — https://github.com/yrom1/mypandas
 
+## Notice
+This is a work in progress!
+
+## Example
+
 ```py
 {open('test_mypandas.py').read()}
 ```

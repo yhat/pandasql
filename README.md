@@ -1,5 +1,10 @@
 # mypandas — https://github.com/yrom1/mypandas
 
+## Notice
+This is a work in progress!
+
+## Example
+
 ```py
 from mypandas.sqldf import MyPandas
 from mypandas import load_births
