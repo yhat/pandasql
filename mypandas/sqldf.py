@@ -11,7 +11,8 @@ from sqlalchemy.pool import NullPool
 
 __all__ = ["MyPandas", "PandaSQL", "MyPandasException", "sqldf"]
 
-_PRINT = False
+_PRINT = True
+TEMP_DB_NAME = "__MYPANDAS_TEMP"
 
 
 def _print(*args, **kwargs):
@@ -111,13 +112,21 @@ class PandaSQL:
             try:
                 yield conn
             finally:
+                _print("Closing conn")
+                if self.engine.name == "mysql":
+                    conn.execute(f"DROP DATABASE {TEMP_DB_NAME};")
                 conn.close()
 
     def _init_connection(self, conn):
+        _print("Initing conn")
         if self.engine.name == "postgresql":
-            conn.execute("set search_path to pg_temp")
+            conn.execute("SET search_path TO pg_temp")
         if self.engine.name == "mysql":
-            pass  # TODO
+            conn.execute(f"CREATE DATABASE {TEMP_DB_NAME};")
+            conn.execute(f"USE {TEMP_DB_NAME};")
+            # doesnt support BLOB/TEXT:
+            # conn.execute("SET default_storage_engine=MEMORY;")
+            # conn.execute("SET default_tmp_storage_engine=MEMORY;")
 
     def _set_text_factory(self, dbapi_con, connection_record):
         # sqlite only
