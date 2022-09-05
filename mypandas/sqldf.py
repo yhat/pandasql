@@ -1,7 +1,7 @@
 import inspect
 import re
 from contextlib import contextmanager
-from warnings import catch_warnings, filterwarnings
+from warnings import catch_warnings, filterwarnings, warn
 
 from pandas.io.sql import read_sql, to_sql
 from sqlalchemy import create_engine
@@ -9,13 +9,39 @@ from sqlalchemy.event import listen
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
 
-__all__ = ["MyPandas", "PandaSQL", "PandaSQLException", "sqldf"]
+# __all__ = ["MyPandas", "PandaSQL", "PandaSQLException", "sqldf"]
+
+_PRINT = True
 
 
-class PandaSQLException(Exception):
+def _print(*args, **kwargs):
+    if _PRINT:
+        print(*args, **kwargs)
+
+
+def _debug_func(func):
+    def wrapper(*args, **kwargs):
+        _print("QUALNAME", func.__qualname__)
+        ans = func(*args, **kwargs)
+        _print("OUTPUT", ans)
+        return ans
+
+    return wrapper
+
+
+def _debug(cls):
+    for key, value in vars(cls).items():
+        if callable(value):
+            setattr(cls, key, _debug_func(value))
+            continue
+    return cls
+
+
+class MyPandasException(Exception):
     pass
 
 
+@_debug
 class PandaSQL:
     def __init__(self, db_uri="sqlite:///:memory:", persist=False):
         """
@@ -26,14 +52,11 @@ class PandaSQL:
         """
         self.engine = create_engine(db_uri, poolclass=NullPool)
 
+        if self.engine.name not in ("sqlite", "postgresql", "mysql"):
+            raise MyPandasException("Unsupported database engine.")
+
         if self.engine.name == "sqlite":
             listen(self.engine, "connect", self._set_text_factory)
-
-        # INTO THE BREACH
-        # if self.engine.name not in ("sqlite", "postgresql"):
-        #     raise PandaSQLException(
-        #         "Currently only sqlite and postgresql are supported."
-        #     )
 
         self.persist = persist
         self.loaded_tables = set()
@@ -41,7 +64,7 @@ class PandaSQL:
             self._conn = self.engine.connect()
             self._init_connection(self._conn)
 
-    def __call__(self, query, env=None):
+    def __call__(self, query: str, env=None):
         """
         Execute the SQL query.
         Automatically creates tables mentioned in the query from dataframes before executing.
@@ -68,7 +91,7 @@ class PandaSQL:
             try:
                 result = read_sql(query, conn)
             except DatabaseError as ex:
-                raise PandaSQLException(ex)
+                raise MyPandasException(ex)
             except ResourceClosedError:
                 # query returns nothing
                 result = None
@@ -79,27 +102,29 @@ class PandaSQL:
     @contextmanager
     def conn(self):
         if self.persist:
-            # the connection is created in __init__, so just return it
+            # created in __init__
             yield self._conn
             # no cleanup needed
         else:
-            # create the connection
             conn = self.engine.connect()
             self._init_connection(conn)
             try:
                 yield conn
             finally:
-                # cleanup - close connection on exit
                 conn.close()
 
     def _init_connection(self, conn):
         if self.engine.name == "postgresql":
             conn.execute("set search_path to pg_temp")
+        if self.engine.name == "mysql":
+            pass  # TODO
 
     def _set_text_factory(self, dbapi_con, connection_record):
+        # sqlite only
         dbapi_con.text_factory = str
 
 
+@_debug_func
 def get_outer_frame_variables():
     """Get a dict of local and global variables of the first outer frame from another file."""
     cur_filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -109,11 +134,11 @@ def get_outer_frame_variables():
         if f.filename != cur_filename
     )
     variables = {}
-    variables.update(outer_frame.frame.f_globals)
-    variables.update(outer_frame.frame.f_locals)
+    variables.update(**outer_frame.frame.f_globals, **outer_frame.frame.f_locals)
     return variables
 
 
+@_debug_func
 def extract_table_names(query):
     """Extract table names from an SQL query."""
     # a good old fashioned regex. turns out this worked better than actually parsing the code
@@ -124,13 +149,13 @@ def extract_table_names(query):
     return set(tables)
 
 
+@_debug_func
 def write_table(df, tablename, conn):
     """Write a dataframe to the database."""
     with catch_warnings():
         filterwarnings(
             "ignore",
-            message="The provided table name '%s' is not found exactly as such in the database"
-            % tablename,
+            message=f"The provided table name '{tablename}' is not found exactly as such in the database",
         )
         to_sql(
             df,
@@ -140,6 +165,7 @@ def write_table(df, tablename, conn):
         )  # load index into db if all levels are named
 
 
+@_debug_func
 def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
     """
     Query pandas data frames using sql syntax
@@ -172,6 +198,10 @@ def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
     """
+    warn(
+        "sqldf is depricated, use of the MyPandas class is encouraged.",
+        DeprecationWarning,
+    )
     return PandaSQL(db_uri)(query, env)
 
 
