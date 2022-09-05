@@ -1,4 +1,4 @@
-# mypandas — https://github.com/yrom1/mypandas
+# [mypandas](https://github.com/yrom1/mypandas)
 
 ## Notice
 This is a work in progress!
