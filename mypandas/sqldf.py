@@ -2,6 +2,7 @@ import inspect
 import re
 from contextlib import contextmanager
 from warnings import catch_warnings, filterwarnings, warn
+import urllib
 
 from pandas.io.sql import read_sql, to_sql
 from sqlalchemy import create_engine
@@ -59,6 +60,9 @@ class PandaSQL:
         if self.engine.name == "sqlite":
             listen(self.engine, "connect", self._set_text_factory)
 
+        if self.engine.name == "mysql":
+            self._mysql_datbase = urllib.parse.urlsplit(db_uri).path.replace("/", "")
+
         self.persist = persist
         self.loaded_tables = set()
         if self.persist:
@@ -113,7 +117,7 @@ class PandaSQL:
                 yield conn
             finally:
                 _print("Closing conn")
-                if self.engine.name == "mysql":
+                if self.engine.name == "mysql" and self._mysql_datbase == "":
                     conn.execute(f"DROP DATABASE {TEMP_DB_NAME};")
                 conn.close()
 
@@ -122,8 +126,11 @@ class PandaSQL:
         if self.engine.name == "postgresql":
             conn.execute("SET search_path TO pg_temp")
         if self.engine.name == "mysql":
-            conn.execute(f"CREATE DATABASE {TEMP_DB_NAME};")
-            conn.execute(f"USE {TEMP_DB_NAME};")
+            _print("Before", (conn.execute("SELECT DATABASE();").fetchone()))
+            if self._mysql_datbase == "":
+                conn.execute(f"CREATE DATABASE {TEMP_DB_NAME};")
+                conn.execute(f"USE {TEMP_DB_NAME};")
+            _print("After", (conn.execute("SELECT DATABASE();").fetchone()))
             # doesnt support BLOB/TEXT:
             # conn.execute("SET default_storage_engine=MEMORY;")
             # conn.execute("SET default_tmp_storage_engine=MEMORY;")
