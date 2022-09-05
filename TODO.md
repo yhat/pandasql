@@ -1,0 +1,1 @@
+- [ ] create temporary database on creation of MyPandas object, or find out if a temporary database is available out of the box with MySQL like with Postgres
