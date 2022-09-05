@@ -157,12 +157,15 @@ def write_table(df, tablename, conn):
             "ignore",
             message=f"The provided table name '{tablename}' is not found exactly as such in the database",
         )
-        to_sql(
-            df,
-            name=tablename,
-            con=conn,
-            index=not any(name is None for name in df.index.names),
-        )  # load index into db if all levels are named
+        try:
+            df.to_sql(
+                name=tablename,
+                con=conn,
+                index=not any(name is None for name in df.index.names),
+            )  # load index into db if all levels are named
+        except:
+            # TODO prob DROP and then to_sql again?
+            print(f"Table {tablename} already exists, ignoring!")
 
 
 @_debug_func
