@@ -14,7 +14,7 @@ import pandas as pd
 
 births = load_births()
 assert type(births) == pd.DataFrame
-URI = "mysql://root:password@localhost/mypandas"
+URI = "mysql://root:password@localhost/"
 QUERY = """
 -- Yup, this works!
 WITH cte AS (

@@ -1,3 +1,13 @@
+from subprocess import run
+
+
+def _run(cmd: str) -> None:
+    run(cmd, shell=True)
+
+
+_run("touch TEST_MYPANDAS_OUTPUT")
+_run("py test_mypandas.py > TEST_MYPANDAS_OUTPUT")
+
 README = f"""\
 # [mypandas](https://github.com/yrom1/mypandas) — MySQL for Pandas
 
@@ -15,6 +25,8 @@ This is a work in progress!
 {open('TEST_MYPANDAS_OUTPUT').read()}
 ```
 """
+
+_run("rm TEST_MYPANDAS_OUTPUT")
 
 
 if __name__ == "__main__":
