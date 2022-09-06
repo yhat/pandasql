@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mypandas"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
   { name="yrom1", email="ryanm.inbox@gmail.com" },
 ]
-description = "SQL for Pandas, with a MySQL backend."
+description = "MySQL 🐬 for Panadas 🐼"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.10"
