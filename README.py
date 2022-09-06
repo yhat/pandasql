@@ -26,7 +26,7 @@ pip install mypandas
 ## Example
 
 ```py
-{open('./tests/test_mypandas.py').read()}
+{''.join(open('./tests/test_mypandas.py').readlines()[4:])}
 ```
 ```
 {open('TEST_MYPANDAS_OUTPUT').read()}
