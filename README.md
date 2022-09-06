@@ -5,9 +5,20 @@ A package that lets you query pandas DataFrames with MySQL!
 ## Notice
 This is a work in progress!
 
+## Install
+
+Currently available on [PyPI](https://pypi.org/project/mypandas/), to install:
+```
+pip install mypandas
+```
+
 ## Example
 
 ```py
+from shared import add_mypandas_to_path  # isort: ignore
+
+add_mypandas_to_path()
+
 from mypandas.sqldf import MyPandas
 from mypandas import load_births
 import pandas as pd
