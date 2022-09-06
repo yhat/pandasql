@@ -1,10 +1,13 @@
+from shared import add_mypandas_to_path  # isort: ignore
+
+add_mypandas_to_path()
 import string
 
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-from mypandas import PandaSQL, PandaSQLException, load_meat, sqldf
+from mypandas import PandaSQL, MyPandasException, load_meat, sqldf
 
 
 @pytest.fixture()
@@ -197,7 +200,7 @@ def test_name_index(pdsql):
 
 
 def test_nonexistent_table(pdsql):
-    with pytest.raises(PandaSQLException):
+    with pytest.raises(MyPandasException):
         pdsql("SELECT * FROM nosuchtablereally")
 
 
@@ -231,7 +234,7 @@ def test_noleak_legacy(db_uri):
     result = sqldf("SELECT * FROM df", db_uri=db_uri)
     pdtest.assert_frame_equal(df, result)
     del df
-    with pytest.raises(PandaSQLException):
+    with pytest.raises(MyPandasException):
         result = sqldf("SELECT * FROM df", db_uri=db_uri)
 
 
@@ -241,7 +244,7 @@ def test_noleak_class(pdsql):
     result = pdsql("SELECT * FROM df")
     pdtest.assert_frame_equal(df, result)
     del df
-    with pytest.raises(PandaSQLException):
+    with pytest.raises(MyPandasException):
         result = pdsql("SELECT * FROM df")
 
 
@@ -279,7 +282,7 @@ def test_noreturn_query(pdsql):
 @pytest.mark.parametrize("pdsql", [False], indirect=True)
 def test_no_sideeffect_leak(pdsql):
     pdsql("CREATE TABLE tbl (col INTEGER)")
-    with pytest.raises(PandaSQLException):
+    with pytest.raises(MyPandasException):
         result = pdsql("SELECT * FROM tbl")
 
 

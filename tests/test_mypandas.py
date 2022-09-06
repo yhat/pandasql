@@ -1,3 +1,7 @@
+from shared import add_mypandas_to_path  # isort: ignore
+
+add_mypandas_to_path()
+
 from mypandas.sqldf import MyPandas
 from mypandas import load_births
 import pandas as pd
