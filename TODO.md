@@ -1,0 +1,1 @@
+- Fix DELETE FROM having no effect
