@@ -1,11 +1,13 @@
 from shared import add_mypandas_to_path  # isort: ignore
 
 add_mypandas_to_path()
+
 import string
 
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
+
 from mypandas import MyPandasException, PandaSQL, load_meat, sqldf
 
 

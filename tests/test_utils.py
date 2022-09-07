@@ -1,7 +1,9 @@
 from shared import add_mypandas_to_path  # isort: ignore
 
 add_mypandas_to_path()
+
 import pytest
+
 from mypandas.sqldf import extract_table_names, get_outer_frame_variables
 
 

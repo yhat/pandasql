@@ -3,6 +3,7 @@ from shared import add_mypandas_to_path  # isort: ignore
 add_mypandas_to_path()
 
 import pandas as pd
+
 from mypandas import MyPandas, load_births
 
 births = load_births()
