@@ -15,9 +15,8 @@ pip install mypandas
 ## Example
 
 ```py
-from mypandas.sqldf import MyPandas
-from mypandas import load_births
 import pandas as pd
+from mypandas import MyPandas, load_births
 
 births = load_births()
 assert type(births) == pd.DataFrame
@@ -30,7 +29,6 @@ SELECT b1.date d1
 FROM births b1, births b2
 """
 print(MyPandas(URI)(QUERY, locals()))
-
 ```
 ```
                d1      b1         d2      b2
@@ -47,5 +45,4 @@ print(MyPandas(URI)(QUERY, locals()))
 166463 1975-01-01  265775 2012-12-01  340995
 
 [166464 rows x 4 columns]
-
 ```
