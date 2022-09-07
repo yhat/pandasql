@@ -153,7 +153,8 @@ def get_outer_frame_variables():
         if f.filename != cur_filename
     )
     variables = {}
-    variables.update(**outer_frame.frame.f_globals, **outer_frame.frame.f_locals)
+    variables.update(outer_frame.frame.f_globals)
+    variables.update(outer_frame.frame.f_locals)
     return variables
 
 
