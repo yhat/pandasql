@@ -8,7 +8,7 @@ import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-from mypandas import MyPandasException, MyPandas, load_meat, sqldf
+from mypandas import MyPandas, MyPandasException, load_meat, sqldf
 
 
 @pytest.fixture()
