@@ -130,6 +130,7 @@ class PandaSQL:
         if self.engine.name == "mysql":
             _print("Before", (conn.execute("SELECT DATABASE();").fetchone()))
             if self._mysql_datbase == "":
+                conn.execute(f"DROP DATABASE IF EXISTS {TEMP_DB_NAME};")
                 conn.execute(f"CREATE DATABASE {TEMP_DB_NAME};")
                 conn.execute(f"USE {TEMP_DB_NAME};")
             _print("After", (conn.execute("SELECT DATABASE();").fetchone()))
