@@ -11,7 +11,7 @@ from sqlalchemy.event import listen
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
 from sqlalchemy.pool import NullPool
 
-__all__ = ["MyPandas", "PandaSQL", "MyPandasException", "sqldf"]
+__all__ = ["MyPandas", "MyPandasException", "sqldf"]
 
 _PRINT = False
 TEMP_DB_NAME = "__MYPANDAS_TEMP"
@@ -46,7 +46,7 @@ class MyPandasException(Exception):
 
 
 @_debug
-class PandaSQL:
+class MyPandas:
     def __init__(self, db_uri="sqlite:///:memory:", persist=False):
         """
         Initialize with a specific database.
@@ -193,7 +193,7 @@ def write_table(df, tablename, conn):
 def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
     """
     Query pandas data frames using sql syntax
-    This function is meant for backward compatibility only. New users are encouraged to use the PandaSQL class.
+    This function is meant for backward compatibility only. New users are encouraged to use the MyPandas class.
 
     Parameters
     ----------
@@ -217,7 +217,7 @@ def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
         "x": range(100),
         "y": range(100)
     })
-    >>> from pandasql import sqldf
+    >>> from mypandas import sqldf
     >>> sqldf("select * from df;", globals())
     >>> sqldf("select * from df;", locals())
     >>> sqldf("select avg(x) from df;", locals())
@@ -226,7 +226,4 @@ def sqldf(query, env=None, db_uri="sqlite:///:memory:"):
         "sqldf is depricated, use of the MyPandas class is encouraged.",
         DeprecationWarning,
     )
-    return PandaSQL(db_uri)(query, env)
-
-
-MyPandas = PandaSQL
+    return MyPandas(db_uri)(query, env)

@@ -8,7 +8,7 @@ import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-from mypandas import MyPandasException, PandaSQL, load_meat, sqldf
+from mypandas import MyPandasException, MyPandas, load_meat, sqldf
 
 
 @pytest.fixture()
@@ -31,7 +31,7 @@ def db_uri(db_uris, db_flavor):
 
 @pytest.fixture(params=[False, True])
 def pdsql(db_uri, request):
-    return PandaSQL(db_uri, persist=request.param)
+    return MyPandas(db_uri, persist=request.param)
 
 
 def test_select_legacy(db_uri):
