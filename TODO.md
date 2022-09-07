@@ -1,1 +1,2 @@
-- Fix DELETE FROM having no effect
+- DELETE FROM has no effect unless persist=True, should it?
+- Problem calling MyPandas(URI, persist=True) twice, probably logic error of creating/deleting database twice?
