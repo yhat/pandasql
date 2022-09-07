@@ -2,7 +2,6 @@ from shared import add_mypandas_to_path  # isort: ignore
 
 add_mypandas_to_path()
 import pytest
-
 from mypandas.sqldf import extract_table_names, get_outer_frame_variables
 
 
@@ -29,8 +28,8 @@ def test_get_vars():
         ),
         ("SELECT * FROM dbtbl, table_2 JOIN dbtbl USING (a)", {"dbtbl", "table_2"}),
         pytest.mark.xfail(
-            ("SELECT * FROM dbtbl WHERE col = 'Go and join us!'", {"dbtbl"})
-        )(  # type: ignore,
+            ("SELECT * FROM dbtbl WHERE col = 'Go and join us!'", {"dbtbl"})  # type: ignore
+        )(
             "SELECT * FROM course_df WHERE coursecode IN ( SELECT DISTINCT coursecode FROM program_df )",
             {"course_df", "program_df"},
         ),

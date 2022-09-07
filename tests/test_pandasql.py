@@ -6,8 +6,7 @@ import string
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-from mypandas import PandaSQL, MyPandasException, load_meat, sqldf
+from mypandas import MyPandasException, PandaSQL, load_meat, sqldf
 
 
 @pytest.fixture()
