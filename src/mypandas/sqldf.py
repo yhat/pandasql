@@ -1,8 +1,9 @@
 import inspect
 import re
-from contextlib import contextmanager
-from warnings import catch_warnings, filterwarnings, warn
 import urllib
+from contextlib import contextmanager
+from functools import wraps
+from warnings import catch_warnings, filterwarnings, warn
 
 from pandas.io.sql import read_sql, to_sql
 from sqlalchemy import create_engine
@@ -22,6 +23,7 @@ def _print(*args, **kwargs):
 
 
 def _debug_func(func):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         _print("QUALNAME", func.__qualname__)
         ans = func(*args, **kwargs)
@@ -103,7 +105,7 @@ class PandaSQL:
 
         return result
 
-    @property
+    @property  # type: ignore
     @contextmanager
     def conn(self):
         if self.persist:
