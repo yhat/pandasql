@@ -1,4 +1,5 @@
 # [mypandas](https://github.com/yrom1/mypandas) — MySQL for Pandas
+[![Tests](https://github.com/yrom1/mypandas/actions/workflows/test.yml/badge.svg)](https://github.com/yrom1/mypandas/actions/workflows/test.yml)
 
 A package that lets you query pandas DataFrames with MySQL!
 
@@ -16,6 +17,7 @@ pip install mypandas
 
 ```py
 import pandas as pd
+
 from mypandas import MyPandas, load_births
 
 births = load_births()

@@ -10,6 +10,7 @@ _run("py ./tests/test_mypandas.py > TEST_MYPANDAS_OUTPUT")
 
 README = f"""\
 # [mypandas](https://github.com/yrom1/mypandas) — MySQL for Pandas
+[![Tests](https://github.com/yrom1/mypandas/actions/workflows/test.yml/badge.svg)](https://github.com/yrom1/mypandas/actions/workflows/test.yml)
 
 A package that lets you query pandas DataFrames with MySQL!
 
