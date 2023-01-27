@@ -1,6 +1,9 @@
 from distutils.core import setup
 from setuptools import find_packages
 
+with open("requirements.txt", "r") as f:
+    requirements = f.read().splitlines()
+
 setup(
     name="pandasql",
     version="0.7.3",
@@ -13,7 +16,7 @@ setup(
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
     long_description=open("README.rst").read(),
-    install_requires=['numpy', 'pandas', 'sqlalchemy'],
+    install_requires=requirements,
     classifiers=[
         "License :: OSI Approved :: MIT License",
     ],
