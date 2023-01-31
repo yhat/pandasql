@@ -13,7 +13,7 @@ setup(
     package_data={"pandasql": ["data/*.csv"]},
     description="sqldf for pandas",
     long_description=open("README.rst").read(),
-    install_requires=['numpy', 'pandas', 'sqlalchemy'],
+    install_requires=['numpy', 'pandas', 'sqlalchemy<2'],
     classifiers=[
         "License :: OSI Approved :: MIT License",
     ],
