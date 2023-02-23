@@ -1,7 +1,7 @@
 import inspect
 from contextlib import contextmanager
 from pandas.io.sql import to_sql, read_sql
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import re
 from warnings import catch_warnings, filterwarnings
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
@@ -61,7 +61,7 @@ class PandaSQL:
                 write_table(env[table_name], table_name, conn)
 
             try:
-                result = read_sql(query, conn)
+                result = read_sql(text(query), conn)
             except DatabaseError as ex:
                 raise PandaSQLException(ex)
             except ResourceClosedError:
