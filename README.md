@@ -1,3 +1,7 @@
+**DISCLAIMER**
+==============
+This is fork of [`yhat/pandasql`](https://github.com/yhat/pandasql) and all credit goes to the group. This fork just resolves an issue of compatibility with SQLAlchemy v2.x.x. A PR was requested for this to be included in the main `pandasql` project but it seems to be dormant.
+
 pandasql
 ========
 
