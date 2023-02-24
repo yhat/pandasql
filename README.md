@@ -1,6 +1,6 @@
 **DISCLAIMER**
 ==============
-This project is not maintained. It is merely a fork of [`yhat/pandasql`](https://github.com/yhat/pandasql) and all credit goes to the group. This fork just resolves an issue of compatibility with SQLAlchemy v2.x.x. [A PR was requested](https://github.com/yhat/pandasql/pull/104) for this to be included in the main `pandasql` project but it seems to be dormant. This sparked the creation of this fork.
+This project is not maintained. It is merely a fork of [yhat/pandasql](https://github.com/yhat/pandasql) and all credit goes to the group. This fork just resolves an issue of compatibility with SQLAlchemy v2.x.x. [A PR was requested](https://github.com/yhat/pandasql/pull/104) for this to be included in the main `pandasql` project but it seems to be dormant. This sparked the creation of this fork.
 
 pansql
 ========

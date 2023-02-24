@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name="pandasql",
+    name="pansql",
     version="0.7.3",
     author="Greg Lamp",
     author_email="greg@yhathq.com",
