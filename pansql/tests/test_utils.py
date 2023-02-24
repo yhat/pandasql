@@ -1,4 +1,4 @@
-from pandasql.sqldf import get_outer_frame_variables, extract_table_names
+from pansql.sqldf import get_outer_frame_variables, extract_table_names
 import pytest
 
 

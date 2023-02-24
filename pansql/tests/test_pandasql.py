@@ -1,5 +1,5 @@
 import pandas as pd
-from pandasql import PandaSQL, PandaSQLException, sqldf, load_meat
+from pansql import PandaSQL, PandaSQLException, sqldf, load_meat
 import string
 import pytest
 import pandas.util.testing as pdtest

@@ -1,7 +1,7 @@
 from sklearn.datasets import load_iris
 import pandas as pd
-from pandasql import sqldf
-from pandasql import load_meat, load_births
+from pansql import sqldf
+from pansql import load_meat, load_births
 import re
 
 births = load_births()
