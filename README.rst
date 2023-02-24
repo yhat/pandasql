@@ -1,11 +1,11 @@
-pandasql
+pansql
 ========
 
 This is a fork of the original pandasql, with support of multiple SQL
 backends and more convenient interface. See below for more info.
 
-``pandasql`` allows you to query ``pandas`` DataFrames using SQL syntax.
-It works similarly to ``sqldf`` in R. ``pandasql`` seeks to provide a
+``pansql`` allows you to query ``pandas`` DataFrames using SQL syntax.
+It works similarly to ``sqldf`` in R. ``pansql`` seeks to provide a
 more familiar way of manipulating and cleaning data for people new to
 Python or ``pandas``.
 
@@ -14,7 +14,7 @@ Installation
 
 ::
 
-    $ pip install -U pandasql
+    $ pip install -U pansql
 
 Basics
 ======
@@ -42,13 +42,13 @@ default: ``pdsql = PandaSQL(db_uri)`` - to execute queries just call
 Querying
 ^^^^^^^^
 
-Any ``pandas`` dataframes will be automatically detected by ``pandasql``
+Any ``pandas`` dataframes will be automatically detected by ``pansql``
 and you can query them as you would any regular SQL table.
 
 ::
 
     $ python
-    >>> from pandasql import PandaSQL, load_meat, load_births
+    >>> from pansql import PandaSQL, load_meat, load_births
     >>> meat = load_meat()
     >>> births = load_births()
     >>> pdsql = PandaSQL()
