@@ -1,39 +1,39 @@
 **DISCLAIMER**
 ==============
-This is fork of [`yhat/pandasql`](https://github.com/yhat/pandasql) and all credit goes to the group. This fork just resolves an issue of compatibility with SQLAlchemy v2.x.x. A PR was requested for this to be included in the main `pandasql` project but it seems to be dormant.
+This project is not maintained. It is merely a fork of [`yhat/pandasql`](https://github.com/yhat/pandasql) and all credit goes to the group. This fork just resolves an issue of compatibility with SQLAlchemy v2.x.x. [A PR was requested](https://github.com/yhat/pandasql/pull/104) for this to be included in the main `pandasql` project but it seems to be dormant. This sparked the creation of this library.
 
-pandasql
+pansql
 ========
 
-`pandasql` allows you to query `pandas` DataFrames using SQL syntax. It works 
-similarly to `sqldf` in R. `pandasql` seeks to provide a more familiar way of 
+`pansql` allows you to query `pandas` DataFrames using SQL syntax. It works 
+similarly to `sqldf` in R. `pansql` seeks to provide a more familiar way of 
 manipulating and cleaning data for people new to Python or `pandas`.
 
 #### Installation
 ```
-$ pip install -U pandasql
+$ pip install -U pansql
 ```
 
 #### Basics
-The main function used in pandasql is `sqldf`. `sqldf` accepts 2 parametrs
+The main function used in pansql is `sqldf`. `sqldf` accepts 2 parametrs
    - a sql query string
    - a set of session/environment variables (`locals()` or `globals()`)
 
 Specifying `locals()` or `globals()` can get tedious. You can define a short 
 helper function to fix this.
 
-    from pandasql import sqldf
+    from pansql import sqldf
     pysqldf = lambda q: sqldf(q, globals())
 
 #### Querying
-`pandasql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` 
-dataframes will be automatically detected by `pandasql`. You can query them as 
+`pansql` uses [SQLite syntax](http://www.sqlite.org/lang.html). Any `pandas` 
+dataframes will be automatically detected by `pansql`. You can query them as 
 you would any regular SQL table.
 
 
 ```
 $ python
->>> from pandasql import sqldf, load_meat, load_births
+>>> from pansql import sqldf, load_meat, load_births
 >>> pysqldf = lambda q: sqldf(q, globals())
 >>> meat = load_meat()
 >>> births = load_births()
