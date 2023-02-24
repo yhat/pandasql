@@ -12,7 +12,8 @@ setup(
     package_dir={"pansql": "pansql"},
     package_data={"pansql": ["data/*.csv"]},
     description="sqldf for pandas",
-    long_description=open("README.rst").read(),
+    long_description=open("README.md").read(),
+    long_description_content_type='text/markdown',
     install_requires=['numpy', 'pandas', 'sqlalchemy'],
     classifiers=[
         "License :: OSI Approved :: MIT License",
