@@ -1,7 +1,7 @@
 import inspect
 from contextlib import contextmanager
 from pandas.io.sql import to_sql, read_sql
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import re
 from warnings import catch_warnings, filterwarnings
 from sqlalchemy.exc import DatabaseError, ResourceClosedError
@@ -89,7 +89,7 @@ class PandaSQL:
 
     def _init_connection(self, conn):
         if self.engine.name == 'postgresql':
-            conn.execute('set search_path to pg_temp')
+            conn.execute(text('set search_path to pg_temp'))
 
     def _set_text_factory(self, dbapi_con, connection_record):
         dbapi_con.text_factory = str
